@@ -37,7 +37,7 @@ public class MovimentacaoDAO implements InterfaceCRUD<Movimentacao> {
         }
     }
 
-    @Override
+    
     public void inserir(Movimentacao movimento) throws IOException {
         try (FileWriter fileWriter = new FileWriter(NOME_ARQUIVO, true);
              PrintWriter printWriter = new PrintWriter(fileWriter)) {
@@ -47,7 +47,7 @@ public class MovimentacaoDAO implements InterfaceCRUD<Movimentacao> {
         }
     }
 
-    @Override
+    
     public List<Movimentacao> ler() throws IOException {
         List<Movimentacao> movimentos = new ArrayList<>();
         //Lista Temporaria
@@ -104,7 +104,7 @@ public class MovimentacaoDAO implements InterfaceCRUD<Movimentacao> {
         }
     }
 
-    @Override
+    
     public void atualizar(Movimentacao movimentoAtualizado) throws IOException {
         List<Movimentacao> movimentos = ler();
         boolean encontrado = false;
@@ -124,7 +124,7 @@ public class MovimentacaoDAO implements InterfaceCRUD<Movimentacao> {
         reescreverArquivo(movimentos);
     }
 
-    @Override
+    
     public void deletar(Movimentacao movimentoParaDeletar) throws IOException {
         List<Movimentacao> movimentos = ler();
         

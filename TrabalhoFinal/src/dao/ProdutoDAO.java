@@ -47,18 +47,7 @@ public class ProdutoDAO implements InterfaceCRUD<Produto> {
 		}
 	}
 
-	// Método de validação de duplicidade para atualização
-	private void validarAtualizacao(Produto pAtualizado, List<Produto> todos) throws IOException {
-		for (Produto p : todos) {
-			boolean msmCodigo = p.getCodigo() == pAtualizado.getCodigo();
-			boolean msmNome = p.getNome().equalsIgnoreCase(pAtualizado.getNome());
-			if (msmNome && !msmCodigo) {
-				throw new IOException("O nome '" + pAtualizado.getNome() + "' já pertence a outro produto.");
-			}
-		}
-	}
-
-	@Override
+	
 	public void inserir(Produto produto) throws IOException {
 		List<Produto> produtos = ler();
 		validarProduto(produto, produtos);
@@ -71,10 +60,10 @@ public class ProdutoDAO implements InterfaceCRUD<Produto> {
 		}
 	}
 
-	@Override
+	
 	public List<Produto> ler() throws IOException {
 		List<Produto> produtos = new ArrayList<>();
-		//Lista Temporaria
+		// Lista Temporaria
 		List<String> linhasAtual = new ArrayList<>();
 
 		try (FileReader fileReader = new FileReader(NOME_ARQUIVO);
@@ -105,8 +94,7 @@ public class ProdutoDAO implements InterfaceCRUD<Produto> {
 		return produtos;
 	}
 
-	
-	//Salvar as mudancas no arquivo utilizado em deletar e atalizar
+	// Salvar as mudancas no arquivo utilizado em deletar e atalizar
 	private void reescreverArquivo(List<Produto> produtos) throws IOException {
 		try (FileWriter fileWriter = new FileWriter(NOME_ARQUIVO, false);
 				PrintWriter printWriter = new PrintWriter(fileWriter)) {
@@ -118,7 +106,9 @@ public class ProdutoDAO implements InterfaceCRUD<Produto> {
 		}
 	}
 
-	@Override
+	
+
+	
 	public void atualizar(Produto produtoAtualizado) throws IOException {
 		List<Produto> produtos = ler();
 		validarAtualizacao(produtoAtualizado, produtos);
@@ -141,6 +131,16 @@ public class ProdutoDAO implements InterfaceCRUD<Produto> {
 		reescreverArquivo(produtos);
 	}
 
+	// Método de validação de duplicidade para atualização
+	private void validarAtualizacao(Produto pAtualizado, List<Produto> todos) throws IOException {
+		for (Produto p : todos) {
+			boolean msmCodigo = p.getCodigo() == pAtualizado.getCodigo();
+			boolean msmNome = p.getNome().equalsIgnoreCase(pAtualizado.getNome());
+			if (msmNome && !msmCodigo) {
+				throw new IOException("O nome '" + pAtualizado.getNome() + "' já pertence a outro produto.");
+			}
+		}
+	}
 	@Override
 	public void deletar(Produto produtoParaDeletar) throws IOException {
 		List<Produto> produtos = ler();
@@ -154,7 +154,8 @@ public class ProdutoDAO implements InterfaceCRUD<Produto> {
 
 		reescreverArquivo(produtos);
 	}
-	//busca pelo codigo o produto
+
+	// busca pelo codigo o produto
 	public Produto buscarPorCodigo(int codigo) throws IOException {
 		List<Produto> produtos = ler();
 		for (Produto p : produtos) {
