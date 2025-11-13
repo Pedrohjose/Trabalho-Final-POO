@@ -66,18 +66,18 @@ public class Produto implements GerenciaCSV {
 
 	@Override
     public boolean equals(Object obj) {
-        // 1. Se for o mesmíssimo objeto na memória, retorna true.
+        //Se for o mesmíssimo objeto na memória, retorna true.
         if (this == obj)
             return true;
         
-        // 2. Se o outro for nulo ou de uma classe diferente (ex: Entrada), retorna false.
+        //Se o outro for nulo ou de uma classe diferente (ex: Entrada), retorna false.
         if (obj == null || getClass() != obj.getClass())
             return false;
             
-        // 3. Converte o objeto genérico para Produto para podermos ler os dados.
+        //Converte o objeto genérico para Produto para podermos ler os dados.
         Produto produto = (Produto) obj;
         
-        // 4. São iguais se o código (ID) for igual.
+        //São iguais se o código (ID) for igual.
         return codigo == produto.codigo;
     }
 
