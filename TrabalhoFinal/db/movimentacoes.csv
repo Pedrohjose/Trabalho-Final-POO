@@ -12,3 +12,17 @@ quantidade : 20;
 valorUnitario : 3000.0;
 tipoSaida : VENDA_CLIENTE;
 ============
+tipo : ENTRADA;
+codigoProduto : 1;
+data : 2025-11-13;
+quantidade : 100;
+valorUnitario : 2000.0;
+
+============
+tipo : SAIDA;
+codigoProduto : 1;
+data : 2025-11-13;
+quantidade : 10;
+valorUnitario : 100.0;
+tipoSaida : VENDA_CLIENTE;
+============
