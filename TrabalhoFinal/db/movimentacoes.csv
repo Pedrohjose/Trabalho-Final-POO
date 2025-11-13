@@ -1,0 +1,14 @@
+tipo : ENTRADA;
+codigoProduto : 1;
+data : 2025-11-13;
+quantidade : 20;
+valorUnitario : 200.0;
+tipoSaida : N/A;
+============
+tipo : SAIDA;
+codigoProduto : 1;
+data : 2025-11-13;
+quantidade : 20;
+valorUnitario : 3000.0;
+tipoSaida : VENDA_CLIENTE;
+============
