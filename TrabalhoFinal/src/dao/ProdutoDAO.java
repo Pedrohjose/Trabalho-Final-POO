@@ -82,11 +82,9 @@ public class ProdutoDAO implements InterfaceCRUD<Produto> {
 			String linha;
 			while ((linha = bufferedReader.readLine()) != null) {
 
-				// Se encontrar o separador, processa o bloco
 				if (linha.trim().equals(SEPARADOR)) {
 					if (!linhasObjetoAtual.isEmpty()) {
 						try {
-							// Chama o static fromCSV que você criou
 							Produto produto = Produto.fromCSV(linhasObjetoAtual);
 							produtos.add(produto);
 						} catch (IllegalArgumentException e) {
@@ -95,7 +93,6 @@ public class ProdutoDAO implements InterfaceCRUD<Produto> {
 						linhasObjetoAtual.clear();
 					}
 				} else if (!linha.trim().isEmpty()) {
-					// Adiciona a linha ao bloco atual
 					linhasObjetoAtual.add(linha.trim());
 				}
 			}

@@ -29,18 +29,16 @@ public class Saida extends Movimentacao {
     }
 
     public static Movimentacao fromCSV(List<String> linhasDoObjeto) {
-        // Espera 6 linhas
         if (linhasDoObjeto.size() < 6) {
             throw new IllegalArgumentException("Dados insuficientes para criar Saida.");
         }
         
         try {
-            // Pula a linha 0 (tipo : SAIDA)
-            int codigoProduto = Integer.parseInt(parseValor(linhasDoObjeto.get(1)));
-            LocalDate data = LocalDate.parse(parseValor(linhasDoObjeto.get(2)));
-            int quantidade = Integer.parseInt(parseValor(linhasDoObjeto.get(3)));
-            double preco = Double.parseDouble(parseValor(linhasDoObjeto.get(4)));
-            TipoSaida tipo = TipoSaida.valueOf(parseValor(linhasDoObjeto.get(5)));
+            int codigoProduto = Integer.parseInt(extrairValor(linhasDoObjeto.get(1)));
+            LocalDate data = LocalDate.parse(extrairValor(linhasDoObjeto.get(2)));
+            int quantidade = Integer.parseInt(extrairValor(linhasDoObjeto.get(3)));
+            double preco = Double.parseDouble(extrairValor(linhasDoObjeto.get(4)));
+            TipoSaida tipo = TipoSaida.valueOf(extrairValor(linhasDoObjeto.get(5)));
             
             return new Saida(codigoProduto, data, quantidade, preco, tipo);
             
@@ -49,7 +47,7 @@ public class Saida extends Movimentacao {
         }
     }
 
-    // Getters e Setters específicos da Saida
+    // Getters e Setters
     
     public TipoSaida getTipoSaida() {
         return tipoSaida;
@@ -68,10 +66,7 @@ public class Saida extends Movimentacao {
         return tipoSaida == saida.tipoSaida;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), tipoSaida);
-    }
+  
 
 	@Override
 	public void fromCSV(String linha) {

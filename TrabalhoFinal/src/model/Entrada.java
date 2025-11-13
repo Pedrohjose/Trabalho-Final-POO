@@ -19,24 +19,20 @@ public class Entrada extends Movimentacao {
         sb.append("data : ").append(data).append(";").append(ls);
         sb.append("quantidade : ").append(quantidade).append(";").append(ls);
         sb.append("valorUnitario : ").append(valorUnitario).append(";").append(ls);
-        sb.append("tipoSaida : N/A;"); // Linha extra para manter o padrão de 6 linhas
-        
+        sb.append("tipoSaida : N/A;");         
         return sb.toString();
     }
 
     public static Movimentacao fromCSV(List<String> linhasDoObjeto) {
-        // Espera 6 linhas (tipo, codigo, data, qtd, valor, tipoSaida N/A)
         if (linhasDoObjeto.size() < 6) { 
             throw new IllegalArgumentException("Dados insuficientes para criar Entrada.");
         }
         
         try {
-            // Pula a linha 0 (tipo : ENTRADA)
-            int codigoProduto = Integer.parseInt(parseValor(linhasDoObjeto.get(1)));
-            LocalDate data = LocalDate.parse(parseValor(linhasDoObjeto.get(2)));
-            int quantidade = Integer.parseInt(parseValor(linhasDoObjeto.get(3)));
-            double preco = Double.parseDouble(parseValor(linhasDoObjeto.get(4)));
-            // Pula a linha 5 (tipoSaida : N/A)
+            int codigoProduto = Integer.parseInt(extrairValor(linhasDoObjeto.get(1)));
+            LocalDate data = LocalDate.parse(extrairValor(linhasDoObjeto.get(2)));
+            int quantidade = Integer.parseInt(extrairValor(linhasDoObjeto.get(3)));
+            double preco = Double.parseDouble(extrairValor(linhasDoObjeto.get(4)));
             
             return new Entrada(codigoProduto, data, quantidade, preco);
             

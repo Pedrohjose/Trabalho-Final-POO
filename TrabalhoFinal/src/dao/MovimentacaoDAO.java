@@ -19,7 +19,6 @@ public class MovimentacaoDAO implements InterfaceCRUD<Movimentacao> {
 
     private static final String NOME_ARQUIVO = "db/movimentacoes.csv";
     private static final String DIRETORIO_DB = "db";
-    // O separador que define o fim de um objeto
     private static final String SEPARADOR = "============"; 
 
     public MovimentacaoDAO() {

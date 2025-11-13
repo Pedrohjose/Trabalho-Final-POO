@@ -23,8 +23,7 @@ public abstract class Movimentacao implements GerenciaCSV {
     @Override
     public abstract String toCSV();
 
-    // Método auxiliar estático para as subclasses usarem
-    protected static String parseValor(String linha) {
+    protected static String extrairValor(String linha) {
         try {
             String valor = linha.split(" : ")[1];
             return valor.substring(0, valor.length() - 1);
@@ -33,23 +32,28 @@ public abstract class Movimentacao implements GerenciaCSV {
         }
     }
 
-    // --- Getters, Setters, Equals e HashCode ---
-
+    
     @Override
     public boolean equals(Object obj) {
+        // 1. Verificação de Identidade (Mesmo endereço de memória?)
         if (this == obj) return true;
+        
+        // 2. Verificação de Nulidade e Tipo (É a mesma classe?)
         if (obj == null || getClass() != obj.getClass()) return false;
-        Movimentacao that = (Movimentacao) obj;
-        return codigoProduto == that.codigoProduto &&
-               quantidade == that.quantidade &&
-               Double.compare(that.valorUnitario, valorUnitario) == 0 &&
-               Objects.equals(data, that.data);
+        
+        // 3. Casting (Conversão segura para o tipo Movimentacao)
+        Movimentacao other = (Movimentacao) obj;
+        
+        // 4. Comparação profunda de todos os atributos
+        return codigoProduto == other.codigoProduto &&
+               quantidade == other.quantidade &&
+               // Double.compare é usado para evitar erros de precisão com decimais
+               Double.compare(other.valorUnitario, valorUnitario) == 0 &&
+               // Objects.equals evita erro se a data for nula (NullPointerException)
+               Objects.equals(data, other.data);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(codigoProduto, data, quantidade, valorUnitario);
-    }
+ 
 
     public int getCodigoProduto() {
         return codigoProduto;
