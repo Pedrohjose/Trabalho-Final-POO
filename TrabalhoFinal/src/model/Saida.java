@@ -2,7 +2,7 @@ package model;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
+
 
 public class Saida extends Movimentacao {
 
@@ -30,7 +30,7 @@ public class Saida extends Movimentacao {
 
     public static Movimentacao fromCSV(List<String> linhasDoObjeto) {
         if (linhasDoObjeto.size() < 6) {
-            throw new IllegalArgumentException("Dados insuficientes para criar Saida.");
+            throw new IllegalArgumentException("Dados insuficientes para criar saida.");
         }
         
         try {
@@ -43,7 +43,7 @@ public class Saida extends Movimentacao {
             return new Saida(codigoProduto, data, quantidade, preco, tipo);
             
         } catch (Exception e) {
-            throw new IllegalArgumentException("Erro ao formatar dados da Saida: " + e.getMessage());
+            throw new IllegalArgumentException("Erro ao formatar a Saida: " + e.getMessage());
         }
     }
 

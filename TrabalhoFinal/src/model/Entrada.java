@@ -25,7 +25,7 @@ public class Entrada extends Movimentacao {
 
     public static Movimentacao fromCSV(List<String> linhasDoObjeto) {
         if (linhasDoObjeto.size() < 6) { 
-            throw new IllegalArgumentException("Dados insuficientes para criar Entrada.");
+            throw new IllegalArgumentException("Dados insuficientes para criar entrada.");
         }
         
         try {
@@ -37,7 +37,7 @@ public class Entrada extends Movimentacao {
             return new Entrada(codigoProduto, data, quantidade, preco);
             
         } catch (Exception e) {
-            throw new IllegalArgumentException("Erro ao formatar dados da Entrada: " + e.getMessage());
+            throw new IllegalArgumentException("Erro ao formatar a entrada: " + e.getMessage());
         }
     }
 

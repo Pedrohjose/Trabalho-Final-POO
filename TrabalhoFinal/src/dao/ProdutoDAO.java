@@ -39,10 +39,10 @@ public class ProdutoDAO implements InterfaceCRUD<Produto> {
 	private void validarProduto(Produto pValidar, List<Produto> todos) throws IOException {
 		for (Produto p : todos) {
 			if (p.getCodigo() == pValidar.getCodigo()) {
-				throw new IOException("Erro: O código " + pValidar.getCodigo() + " já está cadastrado.");
+				throw new IOException("O código " + pValidar.getCodigo() + " já está cadastrado.");
 			}
 			if (p.getNome().equalsIgnoreCase(pValidar.getNome())) {
-				throw new IOException("Erro: O nome '" + pValidar.getNome() + "' já está cadastrado.");
+				throw new IOException("O nome '" + pValidar.getNome() + "' já está cadastrado.");
 			}
 		}
 	}
@@ -53,7 +53,7 @@ public class ProdutoDAO implements InterfaceCRUD<Produto> {
 			boolean msmCodigo = p.getCodigo() == pAtualizado.getCodigo();
 			boolean msmNome = p.getNome().equalsIgnoreCase(pAtualizado.getNome());
 			if (msmNome && !msmCodigo) {
-				throw new IOException("Erro: O nome '" + pAtualizado.getNome() + "' já pertence a outro produto.");
+				throw new IOException("O nome '" + pAtualizado.getNome() + "' já pertence a outro produto.");
 			}
 		}
 	}
@@ -132,7 +132,7 @@ public class ProdutoDAO implements InterfaceCRUD<Produto> {
 
 		if (!encontrado) {
 			throw new IOException(
-					"Produto com código " + produtoAtualizado.getCodigo() + " não encontrado para atualização.");
+					"Produto com código " + produtoAtualizado.getCodigo() + " não encontrado para atualizar.");
 		}
 
 		reescreverArquivo(produtos);
@@ -146,7 +146,7 @@ public class ProdutoDAO implements InterfaceCRUD<Produto> {
 
 		if (!removido) {
 			throw new IOException(
-					"Produto com código " + produtoParaDeletar.getCodigo() + " não encontrado para deleção.");
+					"Produto com código " + produtoParaDeletar.getCodigo() + " não encontrado para excluir.");
 		}
 
 		reescreverArquivo(produtos);
