@@ -23,6 +23,7 @@ public abstract class Movimentacao implements GerenciaCSV {
     @Override
     public abstract String toCSV();
 
+    
     protected static String extrairValor(String linha) {
         try {
             String valor = linha.split(" : ")[1];
@@ -35,16 +36,16 @@ public abstract class Movimentacao implements GerenciaCSV {
     
     @Override
     public boolean equals(Object obj) {
-        // 1. Verificação de Identidade (Mesmo endereço de memória?)
+        //Verificação de Identidade (Mesmo endereço de memória?)
         if (this == obj) return true;
         
-        // 2. Verificação de Nulidade e Tipo (É a mesma classe?)
+        //Verificação de Nulidade e Tipo (É a mesma classe?)
         if (obj == null || getClass() != obj.getClass()) return false;
         
-        // 3. Casting (Conversão segura para o tipo Movimentacao)
+        //Casting (Conversão segura para o tipo Movimentacao)
         Movimentacao other = (Movimentacao) obj;
         
-        // 4. Comparação profunda de todos os atributos
+        // Comparação profunda de todos os atributos
         return codigoProduto == other.codigoProduto &&
                quantidade == other.quantidade &&
                // Double.compare é usado para evitar erros de precisão com decimais

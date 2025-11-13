@@ -74,7 +74,8 @@ public class ProdutoDAO implements InterfaceCRUD<Produto> {
 	@Override
 	public List<Produto> ler() throws IOException {
 		List<Produto> produtos = new ArrayList<>();
-		List<String> linhasObjetoAtual = new ArrayList<>();
+		//Lista Temporaria
+		List<String> linhasAtual = new ArrayList<>();
 
 		try (FileReader fileReader = new FileReader(NOME_ARQUIVO);
 				BufferedReader bufferedReader = new BufferedReader(fileReader)) {
@@ -83,17 +84,17 @@ public class ProdutoDAO implements InterfaceCRUD<Produto> {
 			while ((linha = bufferedReader.readLine()) != null) {
 
 				if (linha.trim().equals(SEPARADOR)) {
-					if (!linhasObjetoAtual.isEmpty()) {
+					if (!linhasAtual.isEmpty()) {
 						try {
-							Produto produto = Produto.fromCSV(linhasObjetoAtual);
+							Produto produto = Produto.fromCSV(linhasAtual);
 							produtos.add(produto);
 						} catch (IllegalArgumentException e) {
 							System.err.println("Erro ao processar objeto: " + e.getMessage());
 						}
-						linhasObjetoAtual.clear();
+						linhasAtual.clear();
 					}
 				} else if (!linha.trim().isEmpty()) {
-					linhasObjetoAtual.add(linha.trim());
+					linhasAtual.add(linha.trim());
 				}
 			}
 		} catch (FileNotFoundException e) {
@@ -104,6 +105,8 @@ public class ProdutoDAO implements InterfaceCRUD<Produto> {
 		return produtos;
 	}
 
+	
+	//Salvar as mudancas no arquivo utilizado em deletar e atalizar
 	private void reescreverArquivo(List<Produto> produtos) throws IOException {
 		try (FileWriter fileWriter = new FileWriter(NOME_ARQUIVO, false);
 				PrintWriter printWriter = new PrintWriter(fileWriter)) {
@@ -151,7 +154,7 @@ public class ProdutoDAO implements InterfaceCRUD<Produto> {
 
 		reescreverArquivo(produtos);
 	}
-
+	//busca pelo codigo o produto
 	public Produto buscarPorCodigo(int codigo) throws IOException {
 		List<Produto> produtos = ler();
 		for (Produto p : produtos) {

@@ -47,7 +47,6 @@ public class Saida extends Movimentacao {
         }
     }
 
-    // Getters e Setters
     
     public TipoSaida getTipoSaida() {
         return tipoSaida;
@@ -70,7 +69,6 @@ public class Saida extends Movimentacao {
 
 	@Override
 	public void fromCSV(String linha) {
-		// TODO Auto-generated method stub
 		
 	}
 }

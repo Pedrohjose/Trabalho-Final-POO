@@ -18,8 +18,7 @@ public class Entrada extends Movimentacao {
         sb.append("codigoProduto : ").append(codigoProduto).append(";").append(ls);
         sb.append("data : ").append(data).append(";").append(ls);
         sb.append("quantidade : ").append(quantidade).append(";").append(ls);
-        sb.append("valorUnitario : ").append(valorUnitario).append(";").append(ls);
-        sb.append("tipoSaida : N/A;");         
+        sb.append("valorUnitario : ").append(valorUnitario).append(";").append(ls);        
         return sb.toString();
     }
 

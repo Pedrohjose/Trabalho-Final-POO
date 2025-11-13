@@ -42,15 +42,16 @@ public class MovimentacaoDAO implements InterfaceCRUD<Movimentacao> {
         try (FileWriter fileWriter = new FileWriter(NOME_ARQUIVO, true);
              PrintWriter printWriter = new PrintWriter(fileWriter)) {
             
-            printWriter.println(movimento.toCSV()); // Imprime o bloco
-            printWriter.println(SEPARADOR); // Imprime o separador
+            printWriter.println(movimento.toCSV()); 
+            printWriter.println(SEPARADOR); 
         }
     }
 
     @Override
     public List<Movimentacao> ler() throws IOException {
         List<Movimentacao> movimentos = new ArrayList<>();
-        List<String> linhasObjetoAtual = new ArrayList<>(); // Acumulador de linhas
+        //Lista Temporaria
+        List<String> linhasObjetoAtual = new ArrayList<>(); 
         
         try (FileReader fileReader = new FileReader(NOME_ARQUIVO);
              BufferedReader bufferedReader = new BufferedReader(fileReader)) {
@@ -58,11 +59,10 @@ public class MovimentacaoDAO implements InterfaceCRUD<Movimentacao> {
             String linha;
             while ((linha = bufferedReader.readLine()) != null) {
                 
-                // Se for o separador, processa o bloco
                 if (linha.trim().equals(SEPARADOR)) {
                     if (!linhasObjetoAtual.isEmpty()) {
                         try {
-                            // Pega a primeira linha para descobrir o tipo
+                            
                             String tipo = linhasObjetoAtual.get(0); 
                             Movimentacao movimento;
                             
@@ -78,10 +78,9 @@ public class MovimentacaoDAO implements InterfaceCRUD<Movimentacao> {
                         } catch (Exception e) {
                             System.err.println("Erro ao processar objeto (Movimentacao): " + e.getMessage());
                         }
-                        linhasObjetoAtual.clear(); // Limpa para o próximo bloco
+                        linhasObjetoAtual.clear(); 
                     }
                 } else if (!linha.trim().isEmpty()) {
-                    // Acumula a linha no bloco
                     linhasObjetoAtual.add(linha.trim());
                 }
             }
@@ -119,7 +118,7 @@ public class MovimentacaoDAO implements InterfaceCRUD<Movimentacao> {
         }
 
         if (!encontrado) {
-            throw new IOException("Movimento não encontrado para atualização.");
+            throw new IOException("Movimento não encontrado para atualizar.");
         }
 
         reescreverArquivo(movimentos);
@@ -132,7 +131,7 @@ public class MovimentacaoDAO implements InterfaceCRUD<Movimentacao> {
         boolean removido = movimentos.removeIf(movimento -> movimento.equals(movimentoParaDeletar));
 
         if (!removido) {
-            throw new IOException("Movimento não encontrado para deleção.");
+            throw new IOException("Movimento não encontrado para deletar.");
         }
 
         reescreverArquivo(movimentos);
