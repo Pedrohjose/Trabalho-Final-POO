@@ -4,6 +4,5 @@ public interface GerenciaCSV {
 
 	String toCSV();
 	
-	void fromCSV(String linha);
-
+	Object fromCSV(String linha);
 }

@@ -5,16 +5,30 @@ import java.util.Objects;
 
 public abstract class Movimentacao implements GerenciaCSV {
     
-    protected int codigoProduto;
-    protected LocalDate data;
-    protected int quantidade;
-    protected double valorUnitario;
+    private int codigo;
+    private int codigoProduto;
+    private LocalDate data;
+    private int quantidade;
+    private double valorTotal;
+    private static int control = 0;
 
-    public Movimentacao(int codigoProduto, LocalDate data, int quantidade, double valorUnitario) {
+    //Constutor Padrao
+    public Movimentacao(int codigoProduto, int quantidade, double valorTotal) {
+        this.codigo = control;
         this.codigoProduto = codigoProduto;
+        this.quantidade = quantidade;
+        this.valorTotal = valorTotal;
+        control++;
+    }
+
+    //Construtor para o fromCSV
+    public Movimentacao(int codigo, int codigoProduto, double valorTotal, LocalDate data, int quantidade) {
+        this.codigo = codigo;
+        this.codigoProduto = codigoProduto;
+        this.valorTotal = valorTotal;
         this.data = data;
         this.quantidade = quantidade;
-        this.valorUnitario = valorUnitario;
+        control++;
     }
 
     public Movimentacao() {
@@ -22,7 +36,6 @@ public abstract class Movimentacao implements GerenciaCSV {
 
     @Override
     public abstract String toCSV();
-
     
     protected static String extrairValor(String linha) {
         try {
@@ -33,7 +46,6 @@ public abstract class Movimentacao implements GerenciaCSV {
         }
     }
 
-    
     @Override
     public boolean equals(Object obj) {
         //Verificação de Identidade (Mesmo endereço de memória?)
@@ -49,12 +61,10 @@ public abstract class Movimentacao implements GerenciaCSV {
         return codigoProduto == other.codigoProduto &&
                quantidade == other.quantidade &&
                // Double.compare é usado para evitar erros de precisão com decimais
-               Double.compare(other.valorUnitario, valorUnitario) == 0 &&
+               Double.compare(other.valorTotal, valorTotal) == 0 &&
                // Objects.equals evita erro se a data for nula (NullPointerException)
                Objects.equals(data, other.data);
     }
-
- 
 
     public int getCodigoProduto() {
         return codigoProduto;
@@ -80,11 +90,19 @@ public abstract class Movimentacao implements GerenciaCSV {
         this.quantidade = quantidade;
     }
 
-    public double getValorUnitario() {
-        return valorUnitario;
+    public double getvalorTotal() {
+        return valorTotal;
     }
 
-    public void setValorUnitario(double valorUnitario) {
-        this.valorUnitario = valorUnitario;
+    public void setvalorTotal(double valorTotal) {
+        this.valorTotal = valorTotal;
+    }
+
+    public int getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(int codigo) {
+        this.codigo = codigo;
     }
 }

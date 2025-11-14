@@ -1,52 +1,45 @@
 package model;
 
 import java.time.LocalDate;
-import java.util.List;
-
 
 public class Saida extends Movimentacao {
 
     private TipoSaida tipoSaida;
 
-    public Saida(int codigoProduto, LocalDate data, int quantidade, double valorUnitario, TipoSaida tipoSaida) {
-        super(codigoProduto, data, quantidade, valorUnitario);
+    public Saida(int codigoProduto, int quantidade, double valorTotal, TipoSaida tipoSaida) {
+        super(codigoProduto, quantidade, valorTotal);
+        this.tipoSaida = tipoSaida;
+    }
+
+    public Saida(int codigo, int codigoProduto, double valorTotal, LocalDate data, int quantidade, TipoSaida tipoSaida) {
+        super(codigo, codigoProduto, valorTotal, data, quantidade);
         this.tipoSaida = tipoSaida;
     }
 
     @Override
     public String toCSV() {
-        String EOL = System.lineSeparator();
         StringBuilder sb = new StringBuilder();
         
-        sb.append("tipo : SAIDA;").append(EOL);
-        sb.append("codigoProduto : ").append(codigoProduto).append(";").append(EOL);
-        sb.append("data : ").append(data).append(";").append(EOL);
-        sb.append("quantidade : ").append(quantidade).append(";").append(EOL);
-        sb.append("valorUnitario : ").append(valorUnitario).append(";").append(EOL);
-        sb.append("tipoSaida : ").append(tipoSaida.name()).append(";");
+        sb.append(getCodigo()).append(";");
+        sb.append(getCodigoProduto()).append(";");
+        sb.append(getvalorTotal()).append(";");
+        sb.append(getData()).append(";");
+        sb.append(getQuantidade()).append(";");
+        sb.append(getTipoSaida());
         
         return sb.toString();
     }
 
-    public static Movimentacao fromCSV(List<String> linhasDoObjeto) {
-        if (linhasDoObjeto.size() < 6) {
-            throw new IllegalArgumentException("Dados insuficientes para criar saida.");
-        }
-        
+    @Override
+	public Saida fromCSV(String linha) {
         try {
-            int codigoProduto = Integer.parseInt(extrairValor(linhasDoObjeto.get(1)));
-            LocalDate data = LocalDate.parse(extrairValor(linhasDoObjeto.get(2)));
-            int quantidade = Integer.parseInt(extrairValor(linhasDoObjeto.get(3)));
-            double preco = Double.parseDouble(extrairValor(linhasDoObjeto.get(4)));
-            TipoSaida tipo = TipoSaida.valueOf(extrairValor(linhasDoObjeto.get(5)));
-            
-            return new Saida(codigoProduto, data, quantidade, preco, tipo);
-            
+        String[] dados = linha.split(";");
+
+        return new Saida(Integer.parseInt(dados[0]), Integer.parseInt(dados[1]), Double.parseDouble(dados[2]), LocalDate.parse(dados[3]), Integer.parseInt(dados[4]), TipoSaida.valueOf(dados[5]));
         } catch (Exception e) {
             throw new IllegalArgumentException("Erro ao formatar a Saida: " + e.getMessage());
         }
-    }
-
+	}
     
     public TipoSaida getTipoSaida() {
         return tipoSaida;
@@ -64,11 +57,4 @@ public class Saida extends Movimentacao {
         Saida saida = (Saida) obj;
         return tipoSaida == saida.tipoSaida;
     }
-
-  
-
-	@Override
-	public void fromCSV(String linha) {
-		
-	}
 }

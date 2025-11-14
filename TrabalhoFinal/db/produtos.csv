@@ -1,18 +1,1 @@
-codigo : 1;
-nome : papd apda;
-preco : 200.0;
-quantidade : 90;
-categoria : HARDWARE;
-============
-codigo : 2;
-nome : daw;
-preco : 200.0;
-quantidade : 0;
-categoria : HARDWARE;
-============
-codigo : 3;
-nome : adm;
-preco : 2200.0;
-quantidade : 0;
-categoria : PERIFERICOS;
-============
+codigo; nome; preco; quantidade; categoria

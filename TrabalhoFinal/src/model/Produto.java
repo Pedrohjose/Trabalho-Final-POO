@@ -1,6 +1,6 @@
 package model;
 
-import java.util.List;
+import java.time.LocalDate;
 
 public class Produto implements GerenciaCSV {
 
@@ -9,6 +9,15 @@ public class Produto implements GerenciaCSV {
 	private double preco;
 	private int quantidade;
 	private CategoriasProdutos categoria;
+	private static int control = 0;
+
+	public Produto(String nome, double preco, CategoriasProdutos categoria) {
+		this.codigo = control++;
+		this.nome = nome;
+		this.preco = preco;
+		this.quantidade = 0;
+		this.categoria = categoria;
+	}
 
 	public Produto(int codigo, String nome, double preco, int quantidade, CategoriasProdutos categoria) {
 		this.codigo = codigo;
@@ -23,46 +32,29 @@ public class Produto implements GerenciaCSV {
 
 	@Override
 	public String toCSV() {
-		String EOL = System.lineSeparator();
-		StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
 
-		sb.append("codigo : ").append(codigo).append(";").append(EOL);
-		sb.append("nome : ").append(nome).append(";").append(EOL);
-		sb.append("preco : ").append(preco).append(";").append(EOL);
-		sb.append("quantidade : ").append(quantidade).append(";").append(EOL);
-		sb.append("categoria : ").append(categoria.name()).append(";");
+		sb.append(categoria).append(";");
+		sb.append(codigo).append(";");
+		sb.append(LocalDate.now()).append(";");
+		sb.append(quantidade).append(";");
+		sb.append(categoria).append(";");
 
 		return sb.toString();
 	}
 
-	public static Produto fromCSV(List<String> linhasDoObjeto) {
-		if (linhasDoObjeto.size() < 5) {
-			throw new IllegalArgumentException(
-					"Dados insuficientes para criar Produto. Linhas lidas: " + linhasDoObjeto.size());
-		}
-
+	@Override
+	public Produto fromCSV(String linha) {
 		try {
-			String valorLinha0 = linhasDoObjeto.get(0).split(" : ")[1];
-			String valorLinha1 = linhasDoObjeto.get(1).split(" : ")[1];
-			String valorLinha2 = linhasDoObjeto.get(2).split(" : ")[1];
-			String valorLinha3 = linhasDoObjeto.get(3).split(" : ")[1];
-			String valorLinha4 = linhasDoObjeto.get(4).split(" : ")[1];
+			String[] dados = linha.split(";");
 
-			int codigo = Integer.parseInt(valorLinha0.substring(0, valorLinha0.length() - 1));
-			String nome = valorLinha1.substring(0, valorLinha1.length() - 1);
-			double preco = Double.parseDouble(valorLinha2.substring(0, valorLinha2.length() - 1));
-			int quantidade = Integer.parseInt(valorLinha3.substring(0, valorLinha3.length() - 1));
-			CategoriasProdutos categoria = CategoriasProdutos
-					.valueOf(valorLinha4.substring(0, valorLinha4.length() - 1));
-
-			return new Produto(codigo, nome, preco, quantidade, categoria);
+			return new Produto(Integer.parseInt(dados[0]), (String)dados[1], Double.parseDouble(dados[2]),Integer.parseInt(dados[3]), CategoriasProdutos.valueOf(dados[4]));
 
 		} catch (Exception e) {
 			throw new IllegalArgumentException(
 					"Erro ao formatar dados do produto. Verifique o arquivo CSV. Erro: " + e.getMessage());
 		}
 	}
-
 
 	@Override
     public boolean equals(Object obj) {
@@ -119,11 +111,5 @@ public class Produto implements GerenciaCSV {
 
 	public void setCategoria(CategoriasProdutos categoria) {
 		this.categoria = categoria;
-	}
-
-	@Override
-	public void fromCSV(String linha) {
-		// TODO Auto-generated method stub
-
 	}
 }
