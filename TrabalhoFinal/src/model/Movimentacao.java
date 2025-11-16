@@ -18,6 +18,7 @@ public abstract class Movimentacao implements GerenciaCSV {
         this.codigoProduto = codigoProduto;
         this.quantidade = quantidade;
         this.valorTotal = valorTotal;
+        this.data = LocalDate.now();
         control++;
     }
 

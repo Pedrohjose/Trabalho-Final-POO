@@ -1,13 +1,13 @@
 package model;
 
 import java.io.IOException;
-//import java.util.List;
+import java.util.List;
 
 public interface InterfaceCRUD<T>  {
     
     void inserir(T objeto) throws IOException;
     
-    //List<T> ler() throws IOException;
+    List<String> ler() throws IOException;
     
     void atualizar(T objeto) throws IOException;
     

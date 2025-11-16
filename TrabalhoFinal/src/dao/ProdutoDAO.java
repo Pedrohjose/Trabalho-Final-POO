@@ -1,14 +1,11 @@
 package dao;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import model.InterfaceCRUD;
 import model.Produto;
@@ -16,153 +13,65 @@ import model.Produto;
 public class ProdutoDAO implements InterfaceCRUD<Produto> {
 
 	private static final String NOME_ARQUIVO = "db/produtos.csv";
-	private static final String DIRETORIO_DB = "db";
-	private static final String SEPARADOR = "============";
 
-	public ProdutoDAO() {
-		File diretorio = new File(DIRETORIO_DB);
-		if (!diretorio.exists()) {
-			diretorio.mkdirs();
-		}
-
-		File arquivo = new File(NOME_ARQUIVO);
-		if (!arquivo.exists()) {
-			try {
-				arquivo.createNewFile();
-			} catch (IOException e) {
-				System.err.println("Erro ao criar arquivo: " + e.getMessage());
-			}
-		}
-	}
-
-	// Método de validação de duplicidade (sem classe de exceção)
-	private void validarProduto(Produto pValidar, List<Produto> todos) throws IOException {
-		for (Produto p : todos) {
-			if (p.getCodigo() == pValidar.getCodigo()) {
-				throw new IOException("O código " + pValidar.getCodigo() + " já está cadastrado.");
-			}
-			if (p.getNome().equalsIgnoreCase(pValidar.getNome())) {
-				throw new IOException("O nome '" + pValidar.getNome() + "' já está cadastrado.");
-			}
-		}
-	}
-
-	
 	public void inserir(Produto produto) throws IOException {
-		List<Produto> produtos = ler();
-		validarProduto(produto, produtos);
+        try (FileWriter fw = new FileWriter(NOME_ARQUIVO)) {
+            fw.write(produto.toCSV());
+        }
+    }
 
-		try (FileWriter fileWriter = new FileWriter(NOME_ARQUIVO, true);
-				PrintWriter printWriter = new PrintWriter(fileWriter)) {
+    public List<String> ler() throws IOException {
+        List<String> produtos = new ArrayList<>();
 
-			printWriter.println(produto.toCSV());
-			printWriter.println(SEPARADOR);
-		}
-	}
+        try(Scanner sc = new Scanner(new File(NOME_ARQUIVO))) {
+            while (sc.hasNextLine()) {
+                produtos.add(sc.nextLine());
+            }
+        }
 
-	
-	public List<Produto> ler() throws IOException {
-		List<Produto> produtos = new ArrayList<>();
-		// Lista Temporaria
-		List<String> linhasAtual = new ArrayList<>();
+        return produtos;
+    }
+    
+    public void atualizar(Produto produtoAtualizado) throws IOException {
+        List<String> produtos = ler();
+        boolean encontrado = false;
 
-		try (FileReader fileReader = new FileReader(NOME_ARQUIVO);
-				BufferedReader bufferedReader = new BufferedReader(fileReader)) {
+        for (int i = 0; i < produtos.size(); i++) {
+            String linha = produtos.get(i);
+            String[] partes = linha.split(";");
+            
+            if(Integer.parseInt(partes[0]) == produtoAtualizado.getCodigo()) {
+                produtos.set(i, linha);
+                encontrado = true;
+                break;
+            }
+        }
 
-			String linha;
-			while ((linha = bufferedReader.readLine()) != null) {
+        if (!encontrado) {
+            System.out.println("Objeto não encontrado");
+        }
 
-				if (linha.trim().equals(SEPARADOR)) {
-					if (!linhasAtual.isEmpty()) {
-						try {
-							Produto produto = Produto.fromCSV(linhasAtual);
-							produtos.add(produto);
-						} catch (IllegalArgumentException e) {
-							System.err.println("Erro ao processar objeto: " + e.getMessage());
-						}
-						linhasAtual.clear();
-					}
-				} else if (!linha.trim().isEmpty()) {
-					linhasAtual.add(linha.trim());
-				}
-			}
-		} catch (FileNotFoundException e) {
-			File file = new File(NOME_ARQUIVO);
-			file.createNewFile();
-		}
+        reescreverArquivo(produtos);
+    }
 
-		return produtos;
-	}
+    
+    public void deletar(Produto produtoParaDeletar) throws IOException {
+        List<String> produtos = ler();
+        
+        boolean removido = produtos.removeIf(produto -> produto.equals(produtoParaDeletar.toCSV()));
 
-	// Salvar as mudancas no arquivo utilizado em deletar e atalizar
-	private void reescreverArquivo(List<Produto> produtos) throws IOException {
-		try (FileWriter fileWriter = new FileWriter(NOME_ARQUIVO, false);
-				PrintWriter printWriter = new PrintWriter(fileWriter)) {
+        if (!removido) {
+            System.out.println("Movimento não encontrado para deletar.");
+        }
 
-			for (Produto p : produtos) {
-				printWriter.println(p.toCSV());
-				printWriter.println(SEPARADOR);
-			}
-		}
-	}
+        reescreverArquivo(produtos);
+    }
 
-	
-
-	
-	public void atualizar(Produto produtoAtualizado) throws IOException {
-		List<Produto> produtos = ler();
-		validarAtualizacao(produtoAtualizado, produtos);
-
-		boolean encontrado = false;
-
-		for (int i = 0; i < produtos.size(); i++) {
-			if (produtos.get(i).equals(produtoAtualizado)) {
-				produtos.set(i, produtoAtualizado);
-				encontrado = true;
-				break;
-			}
-		}
-
-		if (!encontrado) {
-			throw new IOException(
-					"Produto com código " + produtoAtualizado.getCodigo() + " não encontrado para atualizar.");
-		}
-
-		reescreverArquivo(produtos);
-	}
-
-	// Método de validação de duplicidade para atualização
-	private void validarAtualizacao(Produto pAtualizado, List<Produto> todos) throws IOException {
-		for (Produto p : todos) {
-			boolean msmCodigo = p.getCodigo() == pAtualizado.getCodigo();
-			boolean msmNome = p.getNome().equalsIgnoreCase(pAtualizado.getNome());
-			if (msmNome && !msmCodigo) {
-				throw new IOException("O nome '" + pAtualizado.getNome() + "' já pertence a outro produto.");
-			}
-		}
-	}
-	@Override
-	public void deletar(Produto produtoParaDeletar) throws IOException {
-		List<Produto> produtos = ler();
-
-		boolean removido = produtos.removeIf(produto -> produto.equals(produtoParaDeletar));
-
-		if (!removido) {
-			throw new IOException(
-					"Produto com código " + produtoParaDeletar.getCodigo() + " não encontrado para excluir.");
-		}
-
-		reescreverArquivo(produtos);
-	}
-
-	// busca pelo codigo o produto
-	public Produto buscarPorCodigo(int codigo) throws IOException {
-		List<Produto> produtos = ler();
-		for (Produto p : produtos) {
-			if (p.getCodigo() == codigo) {
-				return p;
-			}
-		}
-		throw new IOException("Produto com código " + codigo + " não encontrado.");
-	}
+    public void reescreverArquivo(List<String> produtos) throws IOException {
+        try(FileWriter fw = new FileWriter(NOME_ARQUIVO)) {
+            for (String linha : produtos) {
+                fw.write(linha + System.lineSeparator());
+            }
+        }
+    }
 }

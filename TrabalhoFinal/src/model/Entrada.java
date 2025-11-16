@@ -1,47 +1,41 @@
 package model;
 
 import java.time.LocalDate;
-import java.util.List;
 
 public class Entrada extends Movimentacao {
 
-    public Entrada(int codigoProduto, LocalDate data, int quantidade, double valorUnitario) {
-        super(codigoProduto, data, quantidade, valorUnitario);
+    //Construtor padrão
+    public Entrada(int codigoProduto, int quantidade, double valorUnitario) {
+        super(codigoProduto, quantidade, valorUnitario);
+    }
+
+    //Construtor para o fromCSV
+    public Entrada(int codigo, int codigoProduto, double valorTotal, LocalDate data, int quantidade, TipoSaida tipoSaida) {
+        super(codigo, codigoProduto, valorTotal, data, quantidade);
     }
 
     @Override
     public String toCSV() {
-        String ls = System.lineSeparator();
         StringBuilder sb = new StringBuilder();
         
-        sb.append("tipo : ENTRADA;").append(ls);
-        sb.append("codigoProduto : ").append(codigoProduto).append(";").append(ls);
-        sb.append("data : ").append(data).append(";").append(ls);
-        sb.append("quantidade : ").append(quantidade).append(";").append(ls);
-        sb.append("valorUnitario : ").append(valorUnitario).append(";").append(ls);        
+        sb.append(super.getCodigo()).append(";");
+        sb.append(super.getCodigoProduto()).append(";");
+        sb.append(super.getvalorTotal()).append(";");
+        sb.append(super.getData()).append(";");
+        sb.append(super.getQuantidade()).append(";");  
+
         return sb.toString();
     }
 
-    public static Movimentacao fromCSV(List<String> linhasDoObjeto) {
-        if (linhasDoObjeto.size() < 6) { 
-            throw new IllegalArgumentException("Dados insuficientes para criar entrada.");
-        }
-        
+    @Override
+    public Movimentacao fromCSV(String linha) {
         try {
-            int codigoProduto = Integer.parseInt(extrairValor(linhasDoObjeto.get(1)));
-            LocalDate data = LocalDate.parse(extrairValor(linhasDoObjeto.get(2)));
-            int quantidade = Integer.parseInt(extrairValor(linhasDoObjeto.get(3)));
-            double preco = Double.parseDouble(extrairValor(linhasDoObjeto.get(4)));
-            
-            return new Entrada(codigoProduto, data, quantidade, preco);
+            String[] dados = linha.split(";");
+
+            return new Entrada(Integer.parseInt(dados[0]), Integer.parseInt(dados[1]), Double.parseDouble(dados[2]), LocalDate.parse(dados[3]), Integer.parseInt(dados[4]), TipoSaida.valueOf(dados[5]));
             
         } catch (Exception e) {
             throw new IllegalArgumentException("Erro ao formatar a entrada: " + e.getMessage());
         }
     }
-
-	@Override
-	public void fromCSV(String linha) {
-		
-	}
 }
