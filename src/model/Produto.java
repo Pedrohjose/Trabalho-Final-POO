@@ -34,11 +34,13 @@ public class Produto implements GerenciaCSV {
 	public String toCSV() {
         StringBuilder sb = new StringBuilder();
 
-		sb.append(categoria).append(";");
+		
 		sb.append(codigo).append(";");
+		sb.append(nome).append(";");
 		sb.append(LocalDate.now()).append(";");
 		sb.append(quantidade).append(";");
-		sb.append(categoria).append(";");
+		sb.append(preco).append(";");
+		sb.append(categoria).append("");
 
 		return sb.toString();
 	}
