@@ -32,9 +32,8 @@ public class Produto implements GerenciaCSV {
 
 	@Override
 	public String toCSV() {
-        StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder();
 
-		
 		sb.append(codigo).append(";");
 		sb.append(nome).append(";");
 		sb.append(LocalDate.now()).append(";");
@@ -50,7 +49,8 @@ public class Produto implements GerenciaCSV {
 		try {
 			String[] dados = linha.split(";");
 
-			return new Produto(Integer.parseInt(dados[0]), (String)dados[1], Double.parseDouble(dados[2]),Integer.parseInt(dados[3]), CategoriasProdutos.valueOf(dados[4]));
+			return new Produto(Integer.parseInt(dados[0]), (String) dados[1], Double.parseDouble(dados[2]),
+					Integer.parseInt(dados[3]), CategoriasProdutos.valueOf(dados[4]));
 
 		} catch (Exception e) {
 			throw new IllegalArgumentException(
@@ -59,21 +59,17 @@ public class Produto implements GerenciaCSV {
 	}
 
 	@Override
-    public boolean equals(Object obj) {
-        //Se for o mesmíssimo objeto na memória, retorna true.
-        if (this == obj)
-            return true;
-        
-        //Se o outro for nulo ou de uma classe diferente (ex: Entrada), retorna false.
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-            
-        //Converte o objeto genérico para Produto para podermos ler os dados.
-        Produto produto = (Produto) obj;
-        
-        //São iguais se o código (ID) for igual.
-        return codigo == produto.codigo;
-    }
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+
+		if (obj == null || getClass() != obj.getClass())
+			return false;
+
+		Produto produto = (Produto) obj;
+
+		return codigo == produto.codigo;
+	}
 
 	public int getCodigo() {
 		return codigo;
@@ -113,5 +109,9 @@ public class Produto implements GerenciaCSV {
 
 	public void setCategoria(CategoriasProdutos categoria) {
 		this.categoria = categoria;
+	}
+
+	public static void setControl(int valor) {
+		control = valor;
 	}
 }

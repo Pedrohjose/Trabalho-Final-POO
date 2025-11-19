@@ -4,12 +4,10 @@ import java.time.LocalDate;
 
 public class Entrada extends Movimentacao {
 
-    //Construtor padrão
     public Entrada(int codigoProduto, int quantidade, double valorUnitario) {
         super(codigoProduto, quantidade, valorUnitario);
     }
 
-    //Construtor para o fromCSV
     public Entrada(int codigo, int codigoProduto, double valorTotal, LocalDate data, int quantidade, TipoSaida tipoSaida) {
         super(codigo, codigoProduto, valorTotal, data, quantidade);
     }

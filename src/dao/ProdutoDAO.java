@@ -15,68 +15,111 @@ public class ProdutoDAO implements InterfaceCRUD<Produto> {
 
 	private static final String NOME_ARQUIVO = "db/produtos.csv";
 
-	public void inserir(Produto produto) throws IOException {
-		try (FileWriter fw = new FileWriter(NOME_ARQUIVO, true); BufferedWriter bw = new BufferedWriter(fw)) {
-			String linha = produto.toCSV();
+	public ProdutoDAO() {
+		verificarDiretorio();
+	}
 
-			bw.write(linha);
-			bw.newLine();
-
+	private void verificarDiretorio() {
+		File arquivo = new File(NOME_ARQUIVO);
+		File pasta = arquivo.getParentFile();
+		if (pasta != null && !pasta.exists()) {
+			pasta.mkdirs();
 		}
 	}
 
+	@Override
+	public void inserir(Produto produto) throws IOException {
+		verificarDiretorio();
+		try (FileWriter fw = new FileWriter(NOME_ARQUIVO, true); BufferedWriter bw = new BufferedWriter(fw)) {
+			String linha = produto.toCSV();
+			bw.write(linha);
+			bw.newLine();
+		}
+	}
+
+	@Override
 	public List<String> ler() throws IOException {
 		List<String> produtos = new ArrayList<>();
+		File arquivo = new File(NOME_ARQUIVO);
 
-		try (Scanner sc = new Scanner(new File(NOME_ARQUIVO))) {
+		if (!arquivo.exists()) {
+			return produtos;
+		}
+
+		try (Scanner sc = new Scanner(arquivo)) {
 			while (sc.hasNextLine()) {
-				produtos.add(sc.nextLine());
+				String linha = sc.nextLine();
+				if (linha != null && !linha.trim().isEmpty()) {
+					produtos.add(linha);
+				}
 			}
 		}
 
 		return produtos;
 	}
 
-    public void atualizar(Produto produtoAtualizado) throws IOException {
-        List<String> produtos = ler();
-        boolean encontrado = false;
+	@Override
+	public void atualizar(Produto produtoAtualizado) throws IOException {
+		List<String> produtos = ler();
+		boolean encontrado = false;
 
-        for (int i = 0; i < produtos.size(); i++) {
-            String linha = produtos.get(i);
-            String[] partes = linha.split(";");
-            
-            if(Integer.parseInt(partes[0]) == produtoAtualizado.getCodigo()) {
-                produtos.set(i, linha);
-                encontrado = true;
-                break;
-            }
-        }
+		for (int i = 0; i < produtos.size(); i++) {
+			String linha = produtos.get(i);
+			String[] partes = linha.split(";");
 
-        if (!encontrado) {
-            System.out.println("Objeto não encontrado");
-        }
+			if (partes.length > 0 && Integer.parseInt(partes[0]) == produtoAtualizado.getCodigo()) {
+				produtos.set(i, produtoAtualizado.toCSV());
+				encontrado = true;
+				break;
+			}
+		}
 
-        reescreverArquivo(produtos);
-    }
+		if (encontrado) {
+			reescreverArquivo(produtos);
+		} else {
+			System.out.println("Produto não encontrado para atualizar.");
+		}
+	}
 
-
+	@Override
 	public void deletar(Produto produtoParaDeletar) throws IOException {
 		List<String> produtos = ler();
 
-		boolean removido = produtos.removeIf(produto -> produto.equals(produtoParaDeletar.toCSV()));
+		boolean removido = produtos.removeIf(linha -> {
+			String[] partes = linha.split(";");
+			return partes.length > 0 && Integer.parseInt(partes[0]) == produtoParaDeletar.getCodigo();
+		});
 
-		if (!removido) {
-			System.out.println("Movimento não encontrado para deletar.");
+		if (removido) {
+			reescreverArquivo(produtos);
 		}
-
-		reescreverArquivo(produtos);
 	}
 
 	public void reescreverArquivo(List<String> produtos) throws IOException {
-		try (FileWriter fw = new FileWriter(NOME_ARQUIVO)) {
+		verificarDiretorio();
+		try (FileWriter fw = new FileWriter(NOME_ARQUIVO); BufferedWriter bw = new BufferedWriter(fw)) {
 			for (String linha : produtos) {
-				fw.write(linha + System.lineSeparator());
+				bw.write(linha);
+				bw.newLine();
 			}
+		}
+	}
+
+	public void ajustarContadorId() {
+		try {
+			List<String> lista = ler();
+			int maiorId = -1;
+			for (String linha : lista) {
+				String[] partes = linha.split(";");
+				if (partes.length > 0 && partes[0].matches("\\d+")) {
+					int idAtual = Integer.parseInt(partes[0]);
+					maiorId = Math.max(maiorId, idAtual);
+				}
+			}
+			Produto.setControl(maiorId + 1);
+
+		} catch (IOException e) {
+			Produto.setControl(0);
 		}
 	}
 }
