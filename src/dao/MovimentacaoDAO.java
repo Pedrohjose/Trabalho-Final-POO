@@ -10,7 +10,7 @@ import java.util.Scanner;
 
 import model.InterfaceCRUD;
 import model.Movimentacao;
-import model.Produto;
+
 
 public class MovimentacaoDAO implements InterfaceCRUD<Movimentacao> {
 
@@ -95,7 +95,8 @@ public class MovimentacaoDAO implements InterfaceCRUD<Movimentacao> {
 			int maiorId = -1;
 			for (String linha : lista) {
 				String[] partes = linha.split(";");
-				if (partes.length > 0 && partes[0].matches("\\d+")) {
+				if (partes.length > 0 && partes[0].matches("\\d+"))//Verifica se o texto é formado apenas por dígitos(Regex) 
+				{
 					int idAtual = Integer.parseInt(partes[0]);
 					maiorId = Math.max(maiorId, idAtual);
 				}

@@ -109,7 +109,7 @@ public class TelaProduto extends JFrame {
 		jLabel1.setFont(new java.awt.Font("Noto Sans", 0, 18));
 		jLabel1.setText("Cadastro de Produtos");
 
-		jLabel2.setText("SKU (Cód)");
+		jLabel2.setText("SKU");
 		sku.setText("");
 		sku.setEditable(false);
 
@@ -307,15 +307,19 @@ public class TelaProduto extends JFrame {
 
 		try {
 			List<String> linhas = dao.ler();
+
 			for (String linha : linhas) {
-				String[] dados = linha.split(";");
-				if (dados.length >= 6) {
-					Object[] row = { dados[0], dados[1], dados[5], dados[4], dados[3] };
-					tableModel.addRow(row);
-				}
+
+				Produto p = new Produto().fromCSV(linha);
+
+				Object[] row = { p.getCodigo(), p.getNome(), p.getCategoria(), p.getPreco(), p.getQuantidade() };
+
+				tableModel.addRow(row);
 			}
 		} catch (IOException e) {
-			JOptionPane.showMessageDialog(this, "Erro ao ler arquivo de dados: " + e.getMessage());
+			JOptionPane.showMessageDialog(this, "Erro ao ler arquivo: " + e.getMessage());
+		} catch (Exception e) {
+			System.out.println("Ignorando linha inválida: " + e.getMessage());
 		}
 	}
 
@@ -351,7 +355,10 @@ public class TelaProduto extends JFrame {
 			JOptionPane.showMessageDialog(this, "Selecione um produto na tabela para excluir.");
 			return;
 		}
-		String codigoStr = (String) tableModel.getValueAt(linhaSelecionada, 0);
+
+		Object valorCelula = tableModel.getValueAt(linhaSelecionada, 0);
+
+		String codigoStr = String.valueOf(valorCelula);
 		int codigo = Integer.parseInt(codigoStr);
 		int confirm = JOptionPane.showConfirmDialog(this, "Deseja excluir o produto ID " + codigo + "?",
 				"Confirmar Exclusão", JOptionPane.YES_NO_OPTION);

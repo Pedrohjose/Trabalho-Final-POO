@@ -33,13 +33,7 @@ public abstract class Movimentacao implements GerenciaCSV {
 	public Movimentacao() {
 	}
 
-	public static void setControl(int valor) {
-		control = valor;
-	}
 
-	public static int getControl() {
-		return control;
-	}
 
 	@Override
 	public abstract String toCSV();
@@ -92,5 +86,12 @@ public abstract class Movimentacao implements GerenciaCSV {
 
 	public void setCodigo(int codigo) {
 		this.codigo = codigo;
+	}	
+	public static void setControl(int valor) {
+		control = valor;
+	}
+
+	public static int getControl() {
+		return control;
 	}
 }

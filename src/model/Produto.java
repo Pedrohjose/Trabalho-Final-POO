@@ -10,7 +10,7 @@ public class Produto implements GerenciaCSV {
 	private int quantidade;
 	private CategoriasProdutos categoria;
 	private static int control = 0;
-
+	
 	public Produto(String nome, double preco, CategoriasProdutos categoria) {
 		this.codigo = control++;
 		this.nome = nome;
@@ -49,12 +49,19 @@ public class Produto implements GerenciaCSV {
 		try {
 			String[] dados = linha.split(";");
 
-			return new Produto(Integer.parseInt(dados[0]), (String) dados[1], Double.parseDouble(dados[2]),
-					Integer.parseInt(dados[3]), CategoriasProdutos.valueOf(dados[4]));
+	
+
+			return new Produto(
+				Integer.parseInt(dados[0]),        
+				dados[1],                          
+				Double.parseDouble(dados[4]),      
+				Integer.parseInt(dados[3]),        
+				CategoriasProdutos.valueOf(dados[5]) 
+			);
 
 		} catch (Exception e) {
 			throw new IllegalArgumentException(
-					"Erro ao formatar dados do produto. Verifique o arquivo CSV. Erro: " + e.getMessage());
+					"Erro ao ler linha CSV: " + linha + " | Erro: " + e.getMessage());
 		}
 	}
 
@@ -62,12 +69,9 @@ public class Produto implements GerenciaCSV {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-
 		if (obj == null || getClass() != obj.getClass())
 			return false;
-
 		Produto produto = (Produto) obj;
-
 		return codigo == produto.codigo;
 	}
 
