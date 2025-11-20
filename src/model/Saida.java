@@ -30,8 +30,7 @@ public class Saida extends Movimentacao {
         return sb.toString();
     }
 
-    @Override
-	public Saida fromCSV(String linha) {
+	public static Saida fromCSV(String linha) {
         try {
         String[] dados = linha.split(";");
 

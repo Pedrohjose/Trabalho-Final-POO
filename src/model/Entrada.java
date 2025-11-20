@@ -8,7 +8,7 @@ public class Entrada extends Movimentacao {
         super(codigoProduto, quantidade, valorUnitario);
     }
 
-    public Entrada(int codigo, int codigoProduto, double valorTotal, LocalDate data, int quantidade, TipoSaida tipoSaida) {
+    public Entrada(int codigo, int codigoProduto, double valorTotal, LocalDate data, int quantidade) {
         super(codigo, codigoProduto, valorTotal, data, quantidade);
     }
 
@@ -26,12 +26,11 @@ public class Entrada extends Movimentacao {
         return sb.toString();
     }
 
-    @Override
-    public Movimentacao fromCSV(String linha) {
+    public static Entrada fromCSV(String linha) {
         try {
             String[] dados = linha.split(";");
 
-            return new Entrada(Integer.parseInt(dados[0]), Integer.parseInt(dados[1]), Double.parseDouble(dados[2]), LocalDate.parse(dados[3]), Integer.parseInt(dados[4]), TipoSaida.valueOf(dados[5]));
+            return new Entrada(Integer.parseInt(dados[0]), Integer.parseInt(dados[1]), Double.parseDouble(dados[2]), LocalDate.parse(dados[3]), Integer.parseInt(dados[4]));
             
         } catch (Exception e) {
             throw new IllegalArgumentException("Erro ao formatar a entrada: " + e.getMessage());

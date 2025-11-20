@@ -4,5 +4,7 @@ public interface GerenciaCSV {
 
 	String toCSV();
 	
-	Object fromCSV(String linha);
+	static Object fromCSV(String linha) {
+        return null;
+    }
 }

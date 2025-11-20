@@ -44,8 +44,7 @@ public class Produto implements GerenciaCSV {
 		return sb.toString();
 	}
 
-	@Override
-	public Produto fromCSV(String linha) {
+	public static Produto fromCSV(String linha) {
 		try {
 			String[] dados = linha.split(";");
 
