@@ -2,14 +2,19 @@ package view;
 
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.List;
 
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
@@ -34,6 +39,9 @@ public class TelaProduto extends JFrame {
 	private DefaultTableModel tableModel;
 
 	private TelaEntrada telaEntrada;
+	private TelaSaida telaSaida;
+	private TelaConsultaSaldo telaConsultaSaldo;
+	private TelaListaMovimentos telaMovimentos;
 	private CardLayout cardLayout;
 
 	private static final java.util.logging.Logger logger = java.util.logging.Logger
@@ -61,11 +69,16 @@ public class TelaProduto extends JFrame {
 		jButton1.addActionListener(this::jButton1ActionPerformed);
 		jButton2.setText("Registrar Entrada");
 		jButton2.addActionListener(this::jButton2ActionPerformed);
+		
 		jButton3.setText("Registrar Saída");
 		jButton3.addActionListener(this::jButton3ActionPerformed);
+		
 		jButton4.setText("Consultar Saldo");
-		jButton6.setText("Listar Movimetos");
-
+		jButton4.addActionListener(this::jButton4ActionPerformed);
+		
+		jButton6.setText("Listar Movimentos");
+		jButton6.addActionListener(this::jButton6ActionPerformed);
+		
 		javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
 		jPanel1.setLayout(jPanel1Layout);
 		jPanel1Layout.setHorizontalGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -145,89 +158,126 @@ public class TelaProduto extends JFrame {
 
 		tabelaProdutos = new JTable(tableModel);
 		tabelaProdutos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		
+		tabelaProdutos.getColumnModel().getColumn(0).setPreferredWidth(40); 
+		tabelaProdutos.getColumnModel().getColumn(1).setPreferredWidth(100); 
+		tabelaProdutos.getColumnModel().getColumn(2).setPreferredWidth(120); 
+		tabelaProdutos.getColumnModel().getColumn(4).setPreferredWidth(40);
+		
 		jScrollPane1.setViewportView(tabelaProdutos);
+		
+		JButton btnEditar = new JButton("Editar");
+		btnEditar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int linhaSelecionada = tabelaProdutos.getSelectedRow();
+				if (linhaSelecionada == -1) {
+					JOptionPane.showMessageDialog(null, "Selecione um produto na tabela para editar.");
+					return;
+				}
+
+				String codigoStr = String.valueOf(tableModel.getValueAt(linhaSelecionada, 0));
+				String nomeStr = String.valueOf(tableModel.getValueAt(linhaSelecionada, 1));
+				String categoriaStr = String.valueOf(tableModel.getValueAt(linhaSelecionada, 2));
+				String precoStr = String.valueOf(tableModel.getValueAt(linhaSelecionada, 3));
+				
+				sku.setText(codigoStr);
+				sku.setEnabled(false); 
+				
+				nome.setText(nomeStr);
+				String precoLimpo = precoStr.replace("R$", "").replace(" ", "").replace(".", ",");
+				preco.setText(precoLimpo);
+
+				try {
+					CategoriasProdutos catEnum = CategoriasProdutos.valueOf(categoriaStr);
+					CBcategoria.setSelectedItem(catEnum);
+				} catch (Exception ex) {
+					CBcategoria.setSelectedIndex(0);
+				}
+				
+				nome.requestFocus();
+			}
+		});
 
 		javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-		jPanel2.setLayout(jPanel2Layout);
-		jPanel2Layout.setHorizontalGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(jPanel2Layout.createSequentialGroup().addContainerGap().addGroup(jPanel2Layout
-						.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+		jPanel2Layout.setHorizontalGroup(
+			jPanel2Layout.createParallelGroup(Alignment.LEADING)
+				.addGroup(jPanel2Layout.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(jPanel2Layout.createParallelGroup(Alignment.TRAILING)
 						.addGroup(jPanel2Layout.createSequentialGroup()
-								.addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-										.addComponent(jLabel4).addComponent(jLabel5))
-								.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-						.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-								.addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-										.addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
-										.addGroup(javax.swing.GroupLayout.Alignment.LEADING,
-												jPanel2Layout.createSequentialGroup().addGroup(jPanel2Layout
-														.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING,
-																false)
-														.addComponent(jButton8)
-														.addComponent(preco, javax.swing.GroupLayout.Alignment.LEADING)
-														.addComponent(CBcategoria,
-																javax.swing.GroupLayout.Alignment.LEADING, 0,
-																javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-														.addComponent(jLabel1,
-																javax.swing.GroupLayout.Alignment.LEADING,
-																javax.swing.GroupLayout.DEFAULT_SIZE,
-																javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-														.addComponent(jLabel2,
-																javax.swing.GroupLayout.Alignment.LEADING)
-														.addComponent(sku, javax.swing.GroupLayout.Alignment.LEADING)
-														.addComponent(jLabel3,
-																javax.swing.GroupLayout.Alignment.LEADING)
-														.addComponent(nome, javax.swing.GroupLayout.Alignment.LEADING))
-														.addPreferredGap(
-																javax.swing.LayoutStyle.ComponentPlacement.RELATED, 214,
-																Short.MAX_VALUE)
-														.addGroup(jPanel2Layout
-																.createParallelGroup(
-																		javax.swing.GroupLayout.Alignment.LEADING)
-																.addComponent(jButton7,
-																		javax.swing.GroupLayout.Alignment.TRAILING,
-																		javax.swing.GroupLayout.PREFERRED_SIZE, 80,
-																		javax.swing.GroupLayout.PREFERRED_SIZE)
-																.addComponent(jButton5,
-																		javax.swing.GroupLayout.Alignment.TRAILING,
-																		javax.swing.GroupLayout.PREFERRED_SIZE, 80,
-																		javax.swing.GroupLayout.PREFERRED_SIZE))))
-								.addGap(16, 16, 16)))));
-		jPanel2Layout.setVerticalGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(jPanel2Layout.createSequentialGroup().addContainerGap()
-						.addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 31,
-										javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addComponent(jButton7))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-						.addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addComponent(jButton5).addComponent(jLabel2))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(sku, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE,
-								javax.swing.GroupLayout.PREFERRED_SIZE)
-						.addGap(18, 18, 18).addComponent(jLabel3)
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(nome, javax.swing.GroupLayout.PREFERRED_SIZE,
-								javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED).addComponent(jLabel4)
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(CBcategoria, javax.swing.GroupLayout.PREFERRED_SIZE,
-								javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-						.addGap(18, 18, 18).addComponent(jLabel5)
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(preco, javax.swing.GroupLayout.PREFERRED_SIZE,
-								javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-						.addGap(18, 18, 18).addComponent(jButton8).addGap(18, 18, 18).addComponent(jScrollPane1,
-								javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-						.addContainerGap(26, Short.MAX_VALUE)));
+							.addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
+								.addComponent(jLabel4)
+								.addComponent(jLabel5))
+							.addContainerGap(382, Short.MAX_VALUE))
+						.addGroup(jPanel2Layout.createSequentialGroup()
+							.addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
+								.addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addGroup(jPanel2Layout.createSequentialGroup()
+									.addGroup(jPanel2Layout.createParallelGroup(Alignment.TRAILING, false)
+										.addComponent(jButton8)
+										.addComponent(preco, Alignment.LEADING)
+										.addComponent(CBcategoria, Alignment.LEADING, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+										.addComponent(jLabel1, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+										.addComponent(jLabel2, Alignment.LEADING)
+										.addComponent(sku, Alignment.LEADING)
+										.addComponent(jLabel3, Alignment.LEADING)
+										.addComponent(nome, Alignment.LEADING))
+									.addPreferredGap(ComponentPlacement.RELATED, 214, Short.MAX_VALUE)
+									.addGroup(jPanel2Layout.createParallelGroup(Alignment.TRAILING)
+										.addComponent(jButton7, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+										.addComponent(jButton5, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+										.addComponent(btnEditar, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE))))
+							.addGap(16))))
+		);
+		jPanel2Layout.setVerticalGroup(
+			jPanel2Layout.createParallelGroup(Alignment.LEADING)
+				.addGroup(jPanel2Layout.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+						.addComponent(jButton7))
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
+						.addComponent(jButton5)
+						.addComponent(jLabel2))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
+						.addGroup(jPanel2Layout.createSequentialGroup()
+							.addComponent(sku, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addGap(18)
+							.addComponent(jLabel3)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(nome, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addComponent(jLabel4)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(CBcategoria, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addGap(18)
+							.addComponent(jLabel5)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(preco, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addGap(18)
+							.addComponent(jButton8))
+						.addComponent(btnEditar))
+					.addGap(18)
+					.addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap(26, Short.MAX_VALUE))
+		);
+		jPanel2.setLayout(jPanel2Layout);
 
 		cardLayout = new CardLayout();
 		painelDireito = new JPanel(cardLayout);
 
 		telaEntrada = new TelaEntrada();
+		telaSaida = new TelaSaida();
+		telaConsultaSaldo = new TelaConsultaSaldo();
+		telaMovimentos = new TelaListaMovimentos(); 
 
 		painelDireito.add(jPanel2, "TELA_PRODUTOS");
 		painelDireito.add(telaEntrada, "TELA_ENTRADA");
+		painelDireito.add(telaSaida, "TELA_SAIDA");
+		painelDireito.add(telaConsultaSaldo, "TELA_CONSULTA_SALDO");
+		painelDireito.add(telaMovimentos, "TELA_MOVIMENTOS");
 
 		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -264,41 +314,17 @@ public class TelaProduto extends JFrame {
 	}
 
 	private void jButton3ActionPerformed(ActionEvent e) {
+		cardLayout.show(painelDireito, "TELA_SAIDA"); 
+		telaSaida.carregarDados();
 	}
-
-	private Produto obterProdutoDoFormulario() {
-		try {
-			String nomeTxt = this.nome.getText().trim();
-			if (nomeTxt.isEmpty()) {
-				JOptionPane.showMessageDialog(this, "Preencha o nome do produto.", "Campo Obrigatório",
-						JOptionPane.WARNING_MESSAGE);
-				this.nome.requestFocus();
-				return null;
-			}
-
-			String precoStr = preco.getText().trim().replace(",", ".");
-			if (precoStr.isEmpty()) {
-				JOptionPane.showMessageDialog(this, "Preencha o preço do produto.", "Campo Obrigatório",
-						JOptionPane.WARNING_MESSAGE);
-				preco.requestFocus();
-				return null;
-			}
-			double precoVal = Double.parseDouble(precoStr);
-
-			CategoriasProdutos categoria = (CategoriasProdutos) CBcategoria.getSelectedItem();
-
-			return new Produto(nomeTxt, precoVal, categoria);
-
-		} catch (NumberFormatException e) {
-			JOptionPane.showMessageDialog(this, "Preço inválido. Digite apenas números.", "Erro de Formato",
-					JOptionPane.ERROR_MESSAGE);
-			preco.requestFocus();
-			return null;
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(this, "Erro ao ler dados do formulário: " + e.getMessage(), "Erro",
-					JOptionPane.ERROR_MESSAGE);
-			return null;
-		}
+	
+	private void jButton4ActionPerformed(ActionEvent e) {
+		cardLayout.show(painelDireito, "TELA_CONSULTA_SALDO"); 
+		telaConsultaSaldo.atualizarTela();
+	}
+	private void jButton6ActionPerformed(ActionEvent e) {
+	    cardLayout.show(painelDireito, "TELA_MOVIMENTOS"); 
+	    telaMovimentos.carregarDados();
 	}
 
 	private void atualizarListaProdutos() {
@@ -325,6 +351,7 @@ public class TelaProduto extends JFrame {
 
 	private void limparCampos() {
 		sku.setText("");
+		sku.setEnabled(true);
 		nome.setText("");
 		preco.setText("");
 		if (CBcategoria.getItemCount() > 0)
@@ -332,20 +359,83 @@ public class TelaProduto extends JFrame {
 		nome.requestFocus();
 	}
 
-	private void jButton8ActionPerformed(ActionEvent evnt) {
-		Produto produto = obterProdutoDoFormulario();
-		if (produto != null) {
-			try {
-				ProdutoDAO dao = new ProdutoDAO();
-				dao.inserir(produto);
-				JOptionPane.showMessageDialog(this, "Produto salvo com sucesso!");
-				limparCampos();
-				atualizarListaProdutos();
-			} catch (Exception e) {
-				logger.log(java.util.logging.Level.SEVERE, "Erro ao salvar produto", e);
-				JOptionPane.showMessageDialog(this, "Erro ao salvar: " + e.getMessage(), "Erro de Persistência",
-						JOptionPane.ERROR_MESSAGE);
+	private Produto obterProdutoDoFormulario() {
+		try {
+			String nomeTxt = this.nome.getText().trim();
+			if (nomeTxt.isEmpty()) {
+				JOptionPane.showMessageDialog(this, "Preencha o nome do produto.", "Campo Obrigatório",
+						JOptionPane.WARNING_MESSAGE);
+				this.nome.requestFocus();
+				return null;
 			}
+
+			String precoStr = preco.getText().trim().replace("R$", "").replace(" ", "").replace(".", "").replace(",", ".");
+			if (precoStr.isEmpty()) {
+				JOptionPane.showMessageDialog(this, "Preencha o preço.", "Campo Obrigatório",
+						JOptionPane.WARNING_MESSAGE);
+				preco.requestFocus();
+				return null;
+			}
+			double precoVal = Double.parseDouble(precoStr);
+
+			CategoriasProdutos categoria = (CategoriasProdutos) CBcategoria.getSelectedItem();
+
+			return new Produto(nomeTxt, precoVal, categoria);
+
+		} catch (NumberFormatException e) {
+			JOptionPane.showMessageDialog(this, "Preço inválido. Digite apenas números.", "Erro de Formato",
+					JOptionPane.ERROR_MESSAGE);
+			preco.requestFocus();
+			return null;
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(this, "Erro ao ler dados do formulário: " + e.getMessage(), "Erro",
+					JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
+	}
+
+	private void jButton8ActionPerformed(ActionEvent evnt) {
+		
+		Produto produtoBase = obterProdutoDoFormulario();
+		
+		if(produtoBase == null) return;
+
+		try {
+			ProdutoDAO dao = new ProdutoDAO();
+			String skuTxt = sku.getText();
+
+			if (skuTxt.isEmpty()) {
+
+				dao.inserir(produtoBase);
+				JOptionPane.showMessageDialog(this, "Produto cadastrado com sucesso!");
+				
+			} else {
+				int idExistente = Integer.parseInt(skuTxt);
+				
+				int qtdAtual = 0;
+				List<String> linhas = dao.ler();
+				for(String linha : linhas) {
+					String[] dados = linha.split(";");
+					if(dados.length > 0 && Integer.parseInt(dados[0]) == idExistente) {
+						qtdAtual = Integer.parseInt(dados[3]);
+						break;
+					}
+				}
+				
+				produtoBase.setCodigo(idExistente);
+				produtoBase.setQuantidade(qtdAtual);
+				
+				dao.atualizar(produtoBase);
+				JOptionPane.showMessageDialog(this, "Produto atualizado com sucesso!");
+			}
+
+			limparCampos();
+			atualizarListaProdutos();
+
+		} catch (Exception e) {
+			logger.log(java.util.logging.Level.SEVERE, "Erro ao salvar produto", e);
+			JOptionPane.showMessageDialog(this, "Erro ao salvar: " + e.getMessage(), "Erro de Persistência",
+					JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -357,9 +447,9 @@ public class TelaProduto extends JFrame {
 		}
 
 		Object valorCelula = tableModel.getValueAt(linhaSelecionada, 0);
-
 		String codigoStr = String.valueOf(valorCelula);
 		int codigo = Integer.parseInt(codigoStr);
+		
 		int confirm = JOptionPane.showConfirmDialog(this, "Deseja excluir o produto ID " + codigo + "?",
 				"Confirmar Exclusão", JOptionPane.YES_NO_OPTION);
 

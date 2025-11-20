@@ -16,11 +16,12 @@ public class Entrada extends Movimentacao {
     public String toCSV() {
         StringBuilder sb = new StringBuilder();
         
-        sb.append(super.getCodigo()).append(";");
-        sb.append(super.getCodigoProduto()).append(";");
-        sb.append(super.getvalorTotal()).append(";");
-        sb.append(super.getData()).append(";");
-        sb.append(super.getQuantidade()).append(";");  
+        sb.append(getCodigo()).append(";");
+        sb.append(getCodigoProduto()).append(";");
+        sb.append(getvalorTotal()).append(";");
+        sb.append(getData()).append(";");
+        sb.append(getQuantidade()).append(";");  
+        sb.append("ENTRADA");
 
         return sb.toString();
     }
