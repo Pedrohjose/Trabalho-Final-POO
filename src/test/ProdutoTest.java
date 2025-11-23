@@ -39,7 +39,7 @@ class ProdutoTest {
      * <p>Verifica se a representação CSV do produto está correta.</p>
      */
     @Test
-    void testToCSV() {
+    void PT_01() {
         String retorno = String.format("0;Pc Gamer Pichau;%s;0;10.5;HARDWARE", LocalDate.now());
 
         assertEquals(retorno, produto.toCSV());
@@ -52,7 +52,7 @@ class ProdutoTest {
      * retornam o mesmo valor esperado.</p>
      */
     @Test
-    void testFromCSV() {
+    void PT_02() {
         String data = String.format("0;Pc Gamer Pichau;%s;0;10.5;HARDWARE", LocalDate.now());
         Produto produto1 = Produto.fromCSV(data);
 
@@ -66,7 +66,7 @@ class ProdutoTest {
      * e se produtos diferentes não são iguais.</p>
      */
     @Test
-    void testEquals() {
+    void PT_03() {
         Produto produto1 = new Produto("Teclado Gamer", 100, CategoriasProdutos.PERIFERICOS);
         Produto produto2 = new Produto("Teclado Gamer", 100, CategoriasProdutos.PERIFERICOS);
         Produto produto3 = new Produto("Fone Gamer", 50, CategoriasProdutos.PERIFERICOS);

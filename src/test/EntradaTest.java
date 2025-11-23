@@ -44,7 +44,7 @@ public class EntradaTest {
      * <p>Verifica se a representação CSV está correta com base nos dados da instância.</p>
      */
     @Test
-    public void testToCSV() {
+    public void ET_01() {
         LocalDate data = LocalDate.now();
         String retorno = String.format("0;1;2.5;%s;1;ENTRADA", data.toString());
 
@@ -57,7 +57,7 @@ public class EntradaTest {
      * <p>Verifica se a desserialização e serialização subsequente resultam no mesmo CSV.</p>
      */
     @Test
-    public void testFromCSV() {
+    public void ET_02() {
         String dado = String.format("0;1;2.5;%s;1;ENTRADA", LocalDate.now().toString());
         Entrada entrada1 = Entrada.fromCSV(dado);
 

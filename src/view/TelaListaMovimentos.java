@@ -21,14 +21,12 @@ import dao.MovimentacaoDAO;
 
 /**
  * Painel de interface gráfica que exibe o histórico de movimentações de estoque.
- * <p>
  * Atende aos requisitos:
  * <ul>
- * <li><b>6. Listar entradas:</b> Filtro por tipo "ENTRADA".</li>
- * <li><b>7. Listar saídas:</b> Filtro por tipo "SAÍDA".</li>
- * <li><b>8. Extrato ordenado:</b> Lista movimentos ordenados por data, mostrando o impacto no saldo.</li>
- * </ul>
- * </p>
+ *  <li><b>6. Listar entradas:</b> Filtro por tipo "ENTRADA".</li>
+ *  <li><b>7. Listar saídas:</b> Filtro por tipo "SAÍDA".</li>
+ *  <li><b>8. Extrato ordenado:</b> Lista movimentos ordenados por data, mostrando o impacto no saldo.</li>
+ *  </ul>
  *
  * @author Pedro Jose
  */

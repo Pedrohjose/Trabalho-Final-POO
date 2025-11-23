@@ -188,4 +188,7 @@ public class Produto implements GerenciaCSV {
     public static void setControl(int control) {
         Produto.control = control;
     }
+
+    public static int getControl() { return control; }
+
 }

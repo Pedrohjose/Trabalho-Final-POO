@@ -39,7 +39,7 @@ class SaidaTest {
      * <p>Verifica se a representação CSV da saída está correta.</p>
      */
     @Test
-    void toCSV() {
+    void ST_01() {
         String retorno = String.format("0;0;150.75;%s;10;VENDA_CLIENTE", LocalDate.now());
         assertEquals(retorno, saida.toCSV());
     }
@@ -51,7 +51,7 @@ class SaidaTest {
      * retornam o mesmo valor esperado.</p>
      */
     @Test
-    void fromCSV() {
+    void ST_02() {
         String dado = String.format("0;0;150.75;%s;10;VENDA_CLIENTE", LocalDate.now());
         Saida saida1 = Saida.fromCSV(dado);
         assertEquals(dado, saida1.toCSV());
@@ -64,7 +64,7 @@ class SaidaTest {
      * e se saídas diferentes não são iguais.</p>
      */
     @Test
-    void testEquals() {
+    void ST_03() {
         Saida saida1 = new Saida(0, 10, 150.75, TipoSaida.VENDA_CLIENTE);
         Saida saida2 = new Saida(0, 10, 150.75, TipoSaida.VENDA_CLIENTE);
         Saida saida3 = new Saida(10, 100, 1500.75, TipoSaida.VENDA_CLIENTE);
