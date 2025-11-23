@@ -41,23 +41,27 @@ public class TelaPrincipal extends JFrame {
 
     private static final long serialVersionUID = 1L;
 
+    // Componentes de Cadastro
     private javax.swing.JTextField sku;
     private javax.swing.JTextField nome;
     private javax.swing.JTextField preco;
     private JComboBox<CategoriasProdutos> CBcategoria;
 
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private JPanel painelDireito;
+    // Painéis
+    private javax.swing.JPanel jPanel1; // Menu Lateral
+    private javax.swing.JPanel jPanel2; // Tela de Cadastro de Produtos
+    private JPanel painelDireito;       // Container das telas (CardLayout)
 
+    // Tabela
     private JTable tabelaProdutos;
     private DefaultTableModel tableModel;
 
+    // Referências para as outras telas
     private TelaEntrada telaEntrada;
     private TelaSaida telaSaida;
     private TelaConsultaSaldo telaConsultaSaldo;
     private TelaListaMovimentos telaMovimentos;
-    private CardLayout cardLayout;
+    private CardLayout cardLayout; // Gerenciador de navegação
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger
             .getLogger(TelaPrincipal.class.getName());
@@ -70,20 +74,19 @@ public class TelaPrincipal extends JFrame {
      * </p>
      */
     public TelaPrincipal() {
-        // Garante a sincronia dos IDs ao iniciar a aplicação
+        // --- 1. Inicialização do Sistema ---
+
+        // Ajusta o contador de IDs lendo o arquivo para evitar duplicação ao reiniciar
         ProdutoDAO dao = new ProdutoDAO();
         dao.ajustarContadorId();
 
         initComponents();
 
+        // Define a tela inicial como "Produtos"
         cardLayout.show(painelDireito, "TELA_PRODUTOS");
         atualizarListaProdutos();
     }
 
-    /**
-     * Inicializa e configura todos os componentes da interface gráfica (Swing).
-     * Define layouts, botões de navegação, tabelas e painéis secundários.
-     */
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
@@ -93,9 +96,10 @@ public class TelaPrincipal extends JFrame {
         jButton4 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
 
-        // Configuração dos Botões do Menu Lateral
+        // --- Configuração dos Botões do Menu ---
         jButton1.setText("Produtos");
         jButton1.addActionListener(this::jButton1ActionPerformed);
+
         jButton2.setText("Registrar Entrada");
         jButton2.addActionListener(this::jButton2ActionPerformed);
 
@@ -108,7 +112,7 @@ public class TelaPrincipal extends JFrame {
         jButton6.setText("Listar Movimentos");
         jButton6.addActionListener(this::jButton6ActionPerformed);
 
-        // Layout do Menu Lateral (jPanel1)
+        // Layout do Menu Lateral
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -132,7 +136,7 @@ public class TelaPrincipal extends JFrame {
                         .addGap(18, 18, 18).addComponent(jButton4).addGap(18, 18, 18).addComponent(jButton6)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 
-        // Painel de Cadastro de Produtos (jPanel2)
+        // --- Painel de Cadastro (CRUD Produtos) ---
         jPanel2 = new javax.swing.JPanel();
         jPanel2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
@@ -155,7 +159,7 @@ public class TelaPrincipal extends JFrame {
 
         jLabel2.setText("SKU");
         sku.setText("");
-        sku.setEditable(false); // SKU é gerado automaticamente ou usado para busca na edição
+        sku.setEditable(false); // Bloqueado: ID é automático
 
         jLabel3.setText("Nome");
         nome.setText("");
@@ -171,18 +175,20 @@ public class TelaPrincipal extends JFrame {
         jLabel5.setText("Preço unitário padrão");
         preco.setText("");
 
+        // Botões de Ação do CRUD
         jButton8.setText("Salvar");
         jButton8.addActionListener(this::jButton8ActionPerformed);
+
         jButton7.setText("Novo");
         jButton7.addActionListener(this::jButton7ActionPerformed);
+
         jButton5.setText("Excluir");
         jButton5.addActionListener(this::jButton5ActionPerformed);
 
-        // Configuração da Tabela de Produtos
+        // --- Configuração da Tabela ---
         String[] colunas = { "Código", "Nome", "Categoria", "Preço", "Qtd" };
         tableModel = new DefaultTableModel(colunas, 0) {
             private static final long serialVersionUID = 1L;
-
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
@@ -198,7 +204,7 @@ public class TelaPrincipal extends JFrame {
 
         jScrollPane1.setViewportView(tabelaProdutos);
 
-        // Botão Editar: Carrega os dados da tabela para os campos de texto
+        // --- Botão Editar (Carrega dados para o form) ---
         JButton btnEditar = new JButton("Editar");
         btnEditar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -208,16 +214,17 @@ public class TelaPrincipal extends JFrame {
                     return;
                 }
 
+                // Pega os dados da linha selecionada
                 String codigoStr = String.valueOf(tableModel.getValueAt(linhaSelecionada, 0));
                 String nomeStr = String.valueOf(tableModel.getValueAt(linhaSelecionada, 1));
                 String categoriaStr = String.valueOf(tableModel.getValueAt(linhaSelecionada, 2));
                 String precoStr = String.valueOf(tableModel.getValueAt(linhaSelecionada, 3));
 
+                // Preenche os campos
                 sku.setText(codigoStr);
-                sku.setEnabled(false); // Bloqueia edição do ID
+                sku.setEnabled(false); // ID não pode mudar na edição
 
                 nome.setText(nomeStr);
-                // Limpa formatação monetária para edição
                 String precoLimpo = precoStr.replace("R$", "").replace(" ", "").replace(".", ",");
                 preco.setText(precoLimpo);
 
@@ -300,17 +307,17 @@ public class TelaPrincipal extends JFrame {
         );
         jPanel2.setLayout(jPanel2Layout);
 
-        // Configuração do CardLayout (Navegação)
+        // --- Configuração da Navegação (CardLayout) ---
         cardLayout = new CardLayout();
         painelDireito = new JPanel(cardLayout);
 
-        // Instanciação das telas secundárias
+        // Cria as telas secundárias
         telaEntrada = new TelaEntrada();
         telaSaida = new TelaSaida();
         telaConsultaSaldo = new TelaConsultaSaldo();
         telaMovimentos = new TelaListaMovimentos();
 
-        // Adição das telas ao CardLayout
+        // Adiciona ao container principal
         painelDireito.add(jPanel2, "TELA_PRODUTOS");
         painelDireito.add(telaEntrada, "TELA_ENTRADA");
         painelDireito.add(telaSaida, "TELA_SAIDA");
@@ -341,39 +348,38 @@ public class TelaPrincipal extends JFrame {
         pack();
     }
 
-    /** Ação do botão "Produtos": Navega para a tela de CRUD de produtos. */
+    // --- Métodos de Navegação ---
+
     private void jButton1ActionPerformed(ActionEvent e) {
         cardLayout.show(painelDireito, "TELA_PRODUTOS");
-        atualizarListaProdutos();
+        atualizarListaProdutos(); // Recarrega lista
     }
 
-    /** Ação do botão "Registrar Entrada": Navega para a tela de Entrada. */
     private void jButton2ActionPerformed(ActionEvent e) {
         cardLayout.show(painelDireito, "TELA_ENTRADA");
-        telaEntrada.carregarDados();
+        telaEntrada.carregarDados(); // Carrega combo box
     }
 
-    /** Ação do botão "Registrar Saída": Navega para a tela de Saída. */
     private void jButton3ActionPerformed(ActionEvent e) {
         cardLayout.show(painelDireito, "TELA_SAIDA");
-        telaSaida.carregarDados();
+        telaSaida.carregarDados(); // Carrega combo box
     }
 
-    /** Ação do botão "Consultar Saldo": Navega para a tela de Saldo. */
     private void jButton4ActionPerformed(ActionEvent e) {
         cardLayout.show(painelDireito, "TELA_CONSULTA_SALDO");
-        telaConsultaSaldo.atualizarTela();
+        // Carrega o saldo atual (padrão)
+        telaConsultaSaldo.carregarDados("");
     }
 
-    /** Ação do botão "Listar Movimentos": Navega para a tela de Histórico. */
     private void jButton6ActionPerformed(ActionEvent e) {
         cardLayout.show(painelDireito, "TELA_MOVIMENTOS");
-        telaMovimentos.carregarDados();
+        telaMovimentos.carregarDados(); // Recarrega lista de histórico
     }
 
+    // --- Métodos de CRUD (Lógica de Produtos) ---
+
     /**
-     * Atualiza a tabela de produtos lendo os dados do arquivo.
-     * Utiliza o {@link ProdutoDAO} para recuperar a lista atualizada e popula o modelo da tabela.
+     * Lê o arquivo de produtos via DAO e preenche a tabela visual.
      */
     private void atualizarListaProdutos() {
         ProdutoDAO dao = new ProdutoDAO();
@@ -383,11 +389,8 @@ public class TelaPrincipal extends JFrame {
             List<String> linhas = dao.ler();
 
             for (String linha : linhas) {
-
                 Produto p = new Produto().fromCSV(linha);
-
                 Object[] row = { p.getCodigo(), p.getNome(), p.getCategoria(), p.getPreco(), p.getQuantidade() };
-
                 tableModel.addRow(row);
             }
         } catch (IOException e) {
@@ -398,12 +401,11 @@ public class TelaPrincipal extends JFrame {
     }
 
     /**
-     * Limpa os campos do formulário de produtos e reseta o estado para "Novo Produto".
-     * Libera o campo SKU e foca no campo Nome.
+     * Limpa o formulário para permitir um novo cadastro.
      */
     private void limparCampos() {
         sku.setText("");
-        sku.setEnabled(true);
+        sku.setEnabled(true); // Libera o campo (embora ele seja auto-gerado)
         nome.setText("");
         preco.setText("");
         if (CBcategoria.getItemCount() > 0)
@@ -412,9 +414,7 @@ public class TelaPrincipal extends JFrame {
     }
 
     /**
-     * Captura, valida e converte os dados inseridos no formulário em um objeto {@link Produto}.
-     *
-     * @return Um objeto Produto populado ou null se houver erro de validação.
+     * Valida os campos e cria o objeto Produto.
      */
     private Produto obterProdutoDoFormulario() {
         try {
@@ -426,7 +426,7 @@ public class TelaPrincipal extends JFrame {
                 return null;
             }
 
-            // Normaliza o preço (remove R$, espaços e substitui vírgula por ponto)
+            // Tratamento do preço (virgula para ponto, remove R$)
             String precoStr = preco.getText().trim().replace("R$", "").replace(" ", "").replace(".", "").replace(",", ".");
             if (precoStr.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Preencha o preço.", "Campo Obrigatório",
@@ -453,32 +453,29 @@ public class TelaPrincipal extends JFrame {
     }
 
     /**
-     * Ação do botão "Salvar".
-     * Realiza a inclusão (se SKU vazio) ou atualização (se SKU preenchido) do produto.
-     *
-     * @param evnt O evento de clique do botão.
+     * Botão SALVAR:
+     * - Se SKU vazio: Insere novo.
+     * - Se SKU preenchido: Atualiza existente (mantendo o estoque).
      */
     private void jButton8ActionPerformed(ActionEvent evnt) {
 
         Produto produtoBase = obterProdutoDoFormulario();
-
-        if(produtoBase == null) return;
+        if(produtoBase == null) return; // Parar se validação falhou
 
         try {
             ProdutoDAO dao = new ProdutoDAO();
             String skuTxt = sku.getText();
 
-            // Verifica se é um novo cadastro ou edição
+            // Lógica: Se SKU está vazio, é um produto NOVO
             if (skuTxt.isEmpty()) {
-                // Novo produto
                 dao.inserir(produtoBase);
                 JOptionPane.showMessageDialog(this, "Produto cadastrado com sucesso!");
 
             } else {
-                // Edição de produto existente
+                // Se tem SKU, é EDIÇÃO
                 int idExistente = Integer.parseInt(skuTxt);
 
-                // Recupera a quantidade atual do arquivo para não perdê-la na edição
+                // IMPORTANTE: Recupera a quantidade atual do estoque para não zerar na edição
                 int qtdAtual = 0;
                 List<String> linhas = dao.ler();
                 for(String linha : linhas) {
@@ -490,7 +487,7 @@ public class TelaPrincipal extends JFrame {
                 }
 
                 produtoBase.setCodigo(idExistente);
-                produtoBase.setQuantidade(qtdAtual);
+                produtoBase.setQuantidade(qtdAtual); // Mantém estoque
 
                 dao.atualizar(produtoBase);
                 JOptionPane.showMessageDialog(this, "Produto atualizado com sucesso!");
@@ -501,16 +498,12 @@ public class TelaPrincipal extends JFrame {
 
         } catch (Exception e) {
             logger.log(java.util.logging.Level.SEVERE, "Erro ao salvar produto", e);
-            JOptionPane.showMessageDialog(this, "Erro ao salvar: " + e.getMessage(), "Erro de Persistência",
-                    JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Erro ao salvar: " + e.getMessage());
         }
     }
 
     /**
-     * Ação do botão "Excluir".
-     * Remove o produto selecionado na tabela após confirmação do usuário.
-     *
-     * @param e O evento de clique do botão.
+     * Botão EXCLUIR: Remove o produto selecionado.
      */
     private void jButton5ActionPerformed(ActionEvent e) {
         int linhaSelecionada = tabelaProdutos.getSelectedRow();
@@ -523,13 +516,13 @@ public class TelaPrincipal extends JFrame {
         String codigoStr = String.valueOf(valorCelula);
         int codigo = Integer.parseInt(codigoStr);
 
+        // Confirmação de segurança
         int confirm = JOptionPane.showConfirmDialog(this, "Deseja excluir o produto ID " + codigo + "?",
                 "Confirmar Exclusão", JOptionPane.YES_NO_OPTION);
 
         if (confirm == JOptionPane.YES_OPTION) {
             try {
                 ProdutoDAO dao = new ProdutoDAO();
-                // Cria um objeto temporário apenas com o ID para a exclusão
                 Produto produtoParaDeletar = new Produto(codigo, "", 0.0, 0, null);
                 dao.deletar(produtoParaDeletar);
                 atualizarListaProdutos();
@@ -540,10 +533,7 @@ public class TelaPrincipal extends JFrame {
     }
 
     /**
-     * Ação do botão "Novo".
-     * Limpa os campos para permitir um novo cadastro.
-     *
-     * @param e O evento de clique do botão.
+     * Botão NOVO: Limpa formulário.
      */
     private void jButton7ActionPerformed(ActionEvent e) {
         limparCampos();

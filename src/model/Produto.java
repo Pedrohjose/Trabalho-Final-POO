@@ -1,6 +1,8 @@
 package model;
 
 import java.time.LocalDate;
+import model.CategoriasProdutos;
+
 
 /**
  * Representa um produto no sistema de inventário.

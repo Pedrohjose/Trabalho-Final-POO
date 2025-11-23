@@ -1,9 +1,6 @@
 package dao;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -164,5 +161,32 @@ public class MovimentacaoDAO implements InterfaceCRUD<Movimentacao> {
         } catch (IOException e) {
             Movimentacao.setControl(0);
         }
+    }
+    /**
+     * Lê o arquivo físico de movimentações (CSV) e carrega seu conteúdo para a memória.
+     *
+     * <p>Este método auxiliar acessa o arquivo "movimentacoes.csv", percorre-o linha por linha
+     * e armazena cada registro não vazio em uma lista. Essa lista é utilizada posteriormente
+     * para calcular os saldos por período ou exibir o histórico.</p>
+     *
+     * <p>Caso o arquivo não seja encontrado ou ocorra falha na leitura, o erro é tratado
+     * internamente (try-catch) e uma mensagem é exibida no console.</p>
+     *
+     * @return Uma {@link List} de Strings, onde cada elemento representa uma linha do arquivo CSV.
+     */
+    private List<String> lerMovimentacoes() {
+        List<String> lista = new ArrayList<>();
+        // IMPORTANTE: Ajuste o caminho do arquivo se necessário
+        try (BufferedReader br = new BufferedReader(new FileReader("movimentacoes.csv"))) {
+            String linha;
+            while ((linha = br.readLine()) != null) {
+                if(!linha.trim().isEmpty()) {
+                    lista.add(linha);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Arquivo de movimentações não encontrado ou erro de leitura.");
+        }
+        return lista;
     }
 }

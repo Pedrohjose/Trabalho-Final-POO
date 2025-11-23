@@ -15,27 +15,10 @@ import model.TipoSaida;
 
 /**
  * Painel de registro de saída de produtos do estoque.
- * Esta classe estende {@link JPanel} e fornece a interface para:
- * <ul>
- *   <li>Visualizar produtos cadastrados</li>
- *   <li>Registrar a saída de produtos</li>
- *   <li>Escolher a quantidade e o motivo da saída</li>
- *   <li>Atualizar automaticamente o estoque e registrar a movimentação</li>
- * </ul>
- *
- * <p>Componentes principais:</p>
- * <ul>
- *   <li>JTable para exibir produtos com código, nome, preço e estoque atual</li>
- *   <li>JTextField para quantidade a remover</li>
- *   <li>JComboBox para selecionar o motivo da saída ({@link TipoSaida})</li>
- *   <li>Botões para confirmar saída e recarregar lista</li>
- * </ul>
- *
- * <p>Integrações:</p>
- * <ul>
- *   <li>{@link ProdutoDAO} para ler e atualizar produtos</li>
- *   <li>{@link MovimentacaoDAO} para registrar saídas</li>
- * </ul>
+ * <p>
+ * Atende ao <b>Requisito 3</b>: Registrar saída de produtos, informando produto,
+ * quantidade retirada e motivo, garantindo que não exceda o saldo disponível.
+ * </p>
  *
  * @author Carlos
  */
@@ -50,13 +33,6 @@ public class TelaSaida extends JPanel {
     private JButton btnConfirmar;
     private JButton btnAtualizar;
 
-    /**
-     * Construtor da tela de saída de estoque.
-     * <p>
-     * Inicializa todos os componentes gráficos, configura JTable, JTextField,
-     * JComboBox e botões. Também ajusta o contador de IDs de movimentações.
-     * </p>
-     */
     public TelaSaida() {
         MovimentacaoDAO movDao = new MovimentacaoDAO();
         movDao.ajustarContadorId();
@@ -68,7 +44,6 @@ public class TelaSaida extends JPanel {
         lblTitulo.setFont(new Font("Noto Sans", Font.BOLD, 18));
         add(lblTitulo);
 
-        // Tabela de produtos
         JScrollPane scrollPane = new JScrollPane();
         scrollPane.setBounds(10, 50, 452, 200);
         add(scrollPane);
@@ -76,7 +51,6 @@ public class TelaSaida extends JPanel {
         String[] colunas = { "Código", "Nome", "Preço", "Atual" };
         tableModel = new DefaultTableModel(colunas, 0) {
             private static final long serialVersionUID = 1L;
-
             public boolean isCellEditable(int row, int col) {
                 return false;
             }
@@ -86,7 +60,6 @@ public class TelaSaida extends JPanel {
         tabelaProdutos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         scrollPane.setViewportView(tabelaProdutos);
 
-        // Campo quantidade
         JLabel lblQtd = new JLabel("Qtd a remover:");
         lblQtd.setBounds(10, 270, 120, 20);
         add(lblQtd);
@@ -95,7 +68,6 @@ public class TelaSaida extends JPanel {
         txtQuantidade.setBounds(10, 290, 100, 30);
         add(txtQuantidade);
 
-        // ComboBox motivo
         JLabel lblMotivo = new JLabel("Tipo:");
         lblMotivo.setBounds(130, 270, 100, 20);
         add(lblMotivo);
@@ -104,13 +76,11 @@ public class TelaSaida extends JPanel {
         cbMotivo.setBounds(130, 290, 150, 30);
         add(cbMotivo);
 
-        // Botão confirmar saída
         btnConfirmar = new JButton("Confirmar Saída");
         btnConfirmar.setBounds(300, 290, 150, 30);
         btnConfirmar.addActionListener(e -> registrarSaida());
         add(btnConfirmar);
 
-        // Botão atualizar lista
         btnAtualizar = new JButton("Recarregar Lista");
         btnAtualizar.setBounds(332, 16, 130, 25);
         btnAtualizar.addActionListener(e -> carregarDados());
@@ -120,10 +90,7 @@ public class TelaSaida extends JPanel {
     }
 
     /**
-     * Carrega os produtos do arquivo usando {@link ProdutoDAO} e preenche a JTable.
-     * <p>
-     * Cada linha contém código, nome, preço e quantidade atual do produto.
-     * </p>
+     * Carrega a lista de produtos com estoque atual.
      */
     public void carregarDados() {
         ProdutoDAO dao = new ProdutoDAO();
@@ -142,11 +109,12 @@ public class TelaSaida extends JPanel {
     }
 
     /**
-     * Registra a saída de um produto selecionado.
-     * <p>
-     * Valida se o produto foi selecionado e se a quantidade digitada é válida.
-     * Atualiza o estoque no arquivo e registra a movimentação no {@link MovimentacaoDAO}.
-     * </p>
+     * Lógica de registro de saída.
+     * <ol>
+     * <li>Valida estoque disponível (Não permite saldo negativo).</li>
+     * <li>Atualiza o arquivo de produtos (Subtrai Estoque).</li>
+     * <li>Registra no arquivo de movimentações (Histórico).</li>
+     * </ol>
      */
     private void registrarSaida() {
         int linhaSelecionada = tabelaProdutos.getSelectedRow();
@@ -167,9 +135,9 @@ public class TelaSaida extends JPanel {
         try {
             int qtdSaida = Integer.parseInt(txtQuantidade.getText().trim());
 
-            if (qtdSaida <= 0)
-                throw new NumberFormatException();
+            if (qtdSaida <= 0) throw new NumberFormatException();
 
+            // Validação de Saldo
             if (qtdSaida > estoqueAtual) {
                 JOptionPane.showMessageDialog(this, "Erro: Estoque insuficiente!\nEstoque Atual: " + estoqueAtual
                         + "\nTentativa de Saída: " + qtdSaida, "Saldo Insuficiente", JOptionPane.WARNING_MESSAGE);

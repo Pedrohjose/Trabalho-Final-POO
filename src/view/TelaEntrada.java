@@ -22,17 +22,10 @@ import model.Produto;
 
 /**
  * Painel de interface gráfica para registrar entradas de estoque.
- *
- * <p>Exibe uma tabela com os produtos disponíveis, permitindo ao usuário
- * selecionar um produto, informar a quantidade a adicionar e registrar a entrada.
- * O painel atualiza automaticamente o estoque do produto e registra a movimentação
- * correspondente no histórico de entradas.</p>
- *
- * <p>Inclui botões para confirmar a entrada, recarregar a lista de produtos e validações
- * de quantidade.</p>
- *
- * <p>O painel utiliza {@link ProdutoDAO} para manipulação dos produtos e
- * {@link MovimentacaoDAO} para registro das movimentações de estoque.</p>
+ * <p>
+ * Atende ao <b>Requisito 2</b>: Registrar entrada de produtos, informando produto,
+ * quantidade e valor, atualizando o saldo automaticamente.
+ * </p>
  *
  * @author Pedro Jose
  */
@@ -40,23 +33,14 @@ public class TelaEntrada extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
-    /** Instacia da tabela de produtos */
     private JTable tabelaProdutos;
-
-    /** Instancia do table model */
     private DefaultTableModel tableModel;
-
-    /** Campo de qua */
     private JTextField txtQuantidade;
     private JButton btnConfirmar;
     private JButton btnAtualizar;
 
-    /**
-     * Construtor da tela de registro de entradas.
-     * <p>Inicializa os componentes visuais, ajusta o contador de IDs das movimentações
-     * e carrega os produtos existentes na tabela.</p>
-     */
     public TelaEntrada() {
+        // Sincroniza contador de IDs ao abrir
         MovimentacaoDAO movDao = new MovimentacaoDAO();
         movDao.ajustarContadorId();
 
@@ -105,8 +89,7 @@ public class TelaEntrada extends JPanel {
     }
 
     /**
-     * Carrega os produtos existentes do arquivo na tabela.
-     * <p>Inclui código, nome, preço unitário e quantidade atual em estoque.</p>
+     * Carrega a lista de produtos disponíveis para entrada.
      */
     public void carregarDados() {
         ProdutoDAO dao = new ProdutoDAO();
@@ -125,11 +108,12 @@ public class TelaEntrada extends JPanel {
     }
 
     /**
-     * Registra a entrada de estoque do produto selecionado.
-     * <p>Valida a quantidade informada, atualiza o estoque do produto e insere
-     * a movimentação correspondente no histórico.</p>
-     * <p>Exibe mensagens de erro em caso de seleção incorreta, quantidade inválida
-     * ou falha no acesso aos arquivos.</p>
+     * Lógica de registro de entrada.
+     * <ol>
+     * <li>Valida a seleção e quantidade.</li>
+     * <li>Atualiza o arquivo de produtos (Soma Estoque).</li>
+     * <li>Registra no arquivo de movimentações (Histórico).</li>
+     * </ol>
      */
     private void registrarEntrada() {
         int linhaSelecionada = tabelaProdutos.getSelectedRow();
@@ -177,10 +161,12 @@ public class TelaEntrada extends JPanel {
                 }
 
                 if (produtoParaAtualizar != null) {
+                    // Atualiza Estoque
                     int novaQuantidade = produtoParaAtualizar.getQuantidade() + qtdEntrada;
                     produtoParaAtualizar.setQuantidade(novaQuantidade);
                     produtoDao.atualizar(produtoParaAtualizar);
 
+                    // Registra Histórico
                     MovimentacaoDAO movDao = new MovimentacaoDAO();
                     Entrada novaEntrada = new Entrada(codigoProduto, qtdEntrada, valorTotalMovimentacao);
                     movDao.inserir(novaEntrada);
