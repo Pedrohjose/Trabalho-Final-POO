@@ -3,12 +3,9 @@ package test;
 import dao.MovimentacaoDAO;
 import model.Entrada;
 import model.Movimentacao;
-import model.Saida;
-import model.TipoSaida;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -18,14 +15,15 @@ import static org.junit.Assert.*;
 /**
  * Classe de testes unitários para a classe {@link MovimentacaoDAO}.
  *
- * <p>Testa todos os metodos CRUD da classe e alguns metodos auxiliares
+ * <p>Testa todos os metodos CRUD da classe e alguns metodos auxiliares.
+ * Garante que os dados de teste sejam removidos do arquivo após a execução.</p>
  * <ul>
  * <li>{@link MovimentacaoDAO#ler()}</li>
  * <li>{@link MovimentacaoDAO#inserir(Movimentacao)}</li>
  * <li>{@link MovimentacaoDAO#atualizar(Movimentacao)}</li>
  * <li>{@link MovimentacaoDAO#deletar(Movimentacao)}</li>
  * </ul>
- * <p>Utiliza JUnit 5 e JUnit 5 para configuração e assertions.</p>
+ * <p>Utiliza JUnit 5 para configuração e assertions.</p>
  *
  * @author Carlos
  */
@@ -53,7 +51,8 @@ class MovimentacaoDAOTest {
 
     /**
      * Testa o método {@link MovimentacaoDAO#inserir(Movimentacao)} seguido de {@link MovimentacaoDAO#ler()}.
-     * <p>Verifica se a última linha escrita no arquivo corresponde ao objeto inserido.</p>
+     * <p>Verifica se a última linha escrita no arquivo corresponde ao objeto inserido
+     * e remove o dado ao final.</p>
      */
     @Order(1)
     @Test
@@ -66,6 +65,9 @@ class MovimentacaoDAOTest {
 
             assertEquals(dado.get(totalLinhas - 1), entrada.toCSV());
 
+            // Limpeza: remove a movimentação criada pelo teste
+            movimentacaoDAO.deletar(entrada);
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -73,7 +75,8 @@ class MovimentacaoDAOTest {
 
     /**
      * Testa os métodos {@link MovimentacaoDAO#inserir(Movimentacao)} e {@link MovimentacaoDAO#atualizar(Movimentacao)}.
-     * <p>Após atualizar a movimentação, verifica se o conteúdo regravado no arquivo reflete as alterações realizadas.</p>
+     * <p>Após atualizar a movimentação, verifica se o conteúdo regravado no arquivo reflete as alterações realizadas
+     * e remove o dado ao final.</p>
      */
     @Order(2)
     @Test
@@ -87,6 +90,9 @@ class MovimentacaoDAOTest {
             int totalLinhas = dado.size();
 
             assertEquals(dado.get(totalLinhas - 1), entrada.toCSV());
+
+            // Limpeza: remove a movimentação criada e atualizada pelo teste
+            movimentacaoDAO.deletar(entrada);
 
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -109,6 +115,8 @@ class MovimentacaoDAOTest {
             int totalLinhas = dado.size();
 
             int id = Integer.parseInt(dado.get(totalLinhas - 1).split(";")[0]);
+
+            // Limpeza: remove a movimentação antes de fazer a asserção final
             movimentacaoDAO.deletar(entrada);
 
             assertEquals(id + 1, Movimentacao.getControl());
@@ -128,12 +136,18 @@ class MovimentacaoDAOTest {
     void MD_04() {
         try {
             movimentacaoDAO.inserir(entrada);
+            // O próprio teste consiste em deletar, então a limpeza já ocorre aqui
             movimentacaoDAO.deletar(entrada);
 
             List<String> dado = movimentacaoDAO.ler();
             int totalLinhas = dado.size();
 
-            assertNotEquals(dado.get(totalLinhas - 1), entrada.toCSV());
+            // Verifica se a lista está vazia ou se o último elemento não é o que foi deletado
+            if (totalLinhas > 0) {
+                assertNotEquals(dado.get(totalLinhas - 1), entrada.toCSV());
+            } else {
+                assertEquals(0, totalLinhas);
+            }
 
         } catch (IOException e) {
             throw new RuntimeException(e);
